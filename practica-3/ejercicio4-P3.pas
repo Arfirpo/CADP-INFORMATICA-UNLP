@@ -1,5 +1,5 @@
 
-Program ejercicio3P3;
+Program ejercicio4P3;
 
 Const 
   cantClientes = 9300;
