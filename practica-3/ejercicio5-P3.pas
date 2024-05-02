@@ -28,10 +28,13 @@ Procedure leerAuto(Var auto: autos);
 Begin
   write('Ingrese la marca del auto: ');
   readln(auto.marca);
-  write('Ingrese el modelo del auto: ');
-  readln(auto.modelo);
-  write('Ingrese el precio del auto: ');
-  readln(auto.precio);
+  If auto.marca <> 'zzz' Then
+    Begin
+      write('Ingrese el modelo del auto: ');
+      readln(auto.modelo);
+      write('Ingrese el precio del auto: ');
+      readln(auto.precio);
+    End;
 End;
 
 Var 
