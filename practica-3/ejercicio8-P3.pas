@@ -21,7 +21,7 @@ c) Titulo de los proyectos de la localidad de Daireaux cuyo codigo posee igual c
 
 Type 
   str50 = string[50];
-  cod = -1..9999;
+  cdg = -1..9999;
   {registro de coordinadores}
   coordinador = Record
     dni: str50;
@@ -30,12 +30,12 @@ Type
   end;
   {registro de proyectos}
   proyecto = Record
-    codigo: cod;
-    participantes: integer;
-    docente: coordinador;
-    titulo: str50;
-    escuela: str50;
-    localidad: str50;
+    cod: cod;
+    part: integer;
+    doc: coordinador;
+    tit: str50;
+    esc: str50;
+    loc: str50;
   End;
 
 {compara, entre centros, las dos con menos becarios
@@ -83,24 +83,58 @@ End;
 Procedure leerProyecto(Var p: proyecto; var c: coordinador);
 Begin
       write('Ingrese el codigo del proyecto: ');
-      readln(p.codigo);
+      readln(p.cod);
   If p.codigo <> -1 Then
     Begin
       write('Ingrese el titulo del proyecto: ');
-      readln(p.titulo);
+      readln(p.tit);
       write('Ingrese la localidad de la escuela: ');
-      readln(p.localidad);
+      readln(p.loc);
       write('Ingrese la escuela de los alumnos que participan: ');
-      readln(p.escuela);
+      readln(p.esc);
       write('Ingrese la cantidad de alumnos participantes: ');
-      readln(p.participantes);
+      readln(p.part);
       leerCoordinador(c);
     End;
 End;
 
 Var 
   p: proyecto; c: coordinador;
+  escTot,escLoc: integer;
 Begin
   // SECTOR 1- ACA VAN TODAS LAS VARIABLES QUE SE USAN PARA CONTABILIZAR LOS TOTALES ENTRE TODOS LOS DATOS LEIDOS
+  escTot := 0;
+
   leerProyecto(p,c);
-End.
+
+  While p.cod <> 0 Do
+    Begin
+      // SECTOR 2- ACA VAN TODAS LAS VARIABLES QUE SE DEBEN INICIALIZAR CUANDO CAMBIA DE LOCALIDAD (OSEA CUANDO TE PIDEN ALGO POR LOCALIDAD)
+      escLoc := 0;
+      localidad := p.loc; //corte de control x localidad
+
+
+      // SECTOR 3- ACA SE VAN A ESTAR PROCESANDO TODOS LOS DATOS POR LOCALIDAD (EN ESTE CASO TODAS LAS ESCUELAS)
+      While (p.loc = localidad) And (p.cod <> 0) Do
+        Begin
+          // SECTOR 4- ACA SE VAN A ESTAR PROCESANDO TODOS LOS DATOS POR ESCUELA (EN ESTE CASO CADA ESCUELA)
+          escTot := escTot +1;
+          escLoc := escLoc +1;
+          escuela := p.esc; //corte de control x escuela
+          While(p.esc = escuela) do
+            begin
+
+            end;
+          // SECTOR 5- ACA VA TODO LO QUE ME PIDEN ACTUALIZAR O INFORMAR POR ESCUELA
+          writeln();
+        End;
+      // SECTOR 6- ACA VA TODO LO QUE ME PIDEN ACTUALIZAR O INFORMAR POR LOCALIDAD
+      writeln();
+      uniMaxInvest(universidad,cantInvest,max1,maxUni);
+    End;
+
+
+  // SECTOR 7- ACA INFORMO TODO LO QUE ME PIDEN EN GENERAL Y SIN QUE DEPENDA DEL CORTE DE CONTROL DE LOCALIDAD
+  writeln();
+  writeln();
+End.b
