@@ -123,18 +123,16 @@ Begin
           escuela := p.esc; //corte de control x escuela
           While(p.esc = escuela) do
             begin
-
+              
             end;
           // SECTOR 5- ACA VA TODO LO QUE ME PIDEN ACTUALIZAR O INFORMAR POR ESCUELA
           writeln();
         End;
       // SECTOR 6- ACA VA TODO LO QUE ME PIDEN ACTUALIZAR O INFORMAR POR LOCALIDAD
-      writeln();
-      uniMaxInvest(universidad,cantInvest,max1,maxUni);
+      writeln('La localidad ',localidad,' tiene ',escLoc,' escuelas');
     End;
 
 
   // SECTOR 7- ACA INFORMO TODO LO QUE ME PIDEN EN GENERAL Y SIN QUE DEPENDA DEL CORTE DE CONTROL DE LOCALIDAD
-  writeln();
-  writeln();
+  writeln(escTot,' escuelas presentaron proyectos en el año 2020');
 End.b
