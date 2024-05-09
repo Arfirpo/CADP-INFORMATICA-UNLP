@@ -1,5 +1,24 @@
 Program ejercicio8P3;
 
+{La Comision Provincial por la Memoria desea analizar la informacion de los proyectos presentados en el
+programa Jovenes y Memoria durante la convocatoria 2020. 
+
+Cada proyecto posee un codigo unico, un titulo, el docente coordinador (DNI, nombre y apellido, email), la cantidad de alumnos que participan del proyecto, el
+nombre de la escuela y la localidad a la que pertenecen. 
+
+Cada escuela puede presentar mas de un proyecto.
+
+La informacion se ingresa ordenada consecutivamente por localidad y, para cada localidad, por escuela. 
+
+Realizar un programa que lea la informacion de los proyectos hasta que se ingrese el proyecto con codigo -1 (que no
+debe procesarse).
+
+informe:
+
+a) Cantidad total de escuelas que participan en la convocatoria 2018 y cantidad de escuelas por cada localidad.
+b) Nombres de las dos escuelas con mayor cantidad de alumnos participantes.
+c) Titulo de los proyectos de la localidad de Daireaux cuyo codigo posee igual cantidad de digitos pares e impares.}
+
 Type 
   str50 = string[50];
   cod = -1..9999;
