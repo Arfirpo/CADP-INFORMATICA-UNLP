@@ -1,24 +1,4 @@
-
 Program ejercicio8P3;
-
-
-{La Comision Provincial por la Memoria desea analizar la informacion de los proyectos presentados en el
-programa Jovenes y Memoria durante la convocatoria 2020. 
-
-Cada proyecto posee un codigo unico, un titulo, el docente coordinador (DNI, nombre y apellido, email), la cantidad de alumnos que participan del proyecto, el
-nombre de la escuela y la localidad a la que pertenecen. 
-
-Cada escuela puede presentar mas de un proyecto.
-
-La informacion se ingresa ordenada consecutivamente por localidad y, para cada localidad, por escuela. 
-
-Realizar un programa que lea la informacion de los proyectos hasta que se ingrese el proyecto con codigo -1 (que no debe procesarse).
-
-informe:
-
-a) Cantidad total de escuelas que participan en la convocatoria 2018 y cantidad de escuelas por cada localidad.
-b) Nombres de las dos escuelas con mayor cantidad de alumnos participantes.
-c) Titulo de los proyectos de la localidad de Daireaux cuyo codigo posee igual cantidad de digitos pares e impares.}
 
 Type 
   str50 = string[50];
@@ -62,20 +42,20 @@ End;
 {analiza cada digito del codigo de un proyecto y cuenta cuantos digitos pares e impares tiene}
 Procedure procDig(titulo: str50; codigo: cdg);
 var
-  digPar,digImp, digito: integer;
+  digPar,digImp, digito, aux: integer;
 Begin
-digPar := 0; digImp := 0;
-while digito <> 0 do
-  begin
-    digito := codigo mod 10;
-    if ((digito mod 2) = 0 ) then
-      digPar := digPar +1;
-    else
-      digImp := digImp +1;
-    digito := codigo div 10;
-  end;
-if digPar = digImp then
-  writeln(titulo,' posee un codigo con misma cantidad de digitos pares e impares')
+  digPar := 0; digImp := 0; aux := codigo;
+  while aux <> 0 do
+    begin
+      digito := aux mod 10;
+      if (digito mod 2 = 0 ) then
+        digPar := digPar +1
+      else
+        digImp := digImp +1;
+      aux := aux div 10;
+    end;
+  if digPar = digImp then
+    writeln(titulo,' posee un codigo con misma cantidad de digitos pares e impares')
 End;
 
 {lee por teclado los datos del registro: coordinador}
@@ -95,7 +75,7 @@ Procedure leerProyecto(Var p: proyecto; Var c: coordinador);
 Begin
   write('Ingrese el codigo del proyecto: ');
   readln(p.cod);
-  If p.codigo <> -1 Then
+  If p.cod <> -1 Then
     Begin
       write('Ingrese el titulo del proyecto: ');
       readln(p.tit);
@@ -122,24 +102,25 @@ Begin
   escMax1 := ''; escMax2 := '';
   leerProyecto(p,c);
 
-  While p.cod <> 0 Do
+  While p.cod <> -1 Do
     Begin
       // SECTOR 2- ACA VAN TODAS LAS VARIABLES QUE SE DEBEN INICIALIZAR CUANDO CAMBIA DE LOCALIDAD (OSEA CUANDO TE PIDEN ALGO POR LOCALIDAD)
       escLoc := 0;
       localidad := p.loc;
       //corte de control x localidad
       // SECTOR 3- ACA SE VAN A ESTAR PROCESANDO TODOS LOS DATOS POR LOCALIDAD (EN ESTE CASO TODAS LAS ESCUELAS)
-      While (p.loc = localidad) And (p.cod <> 0) Do
+      While (p.loc = localidad) And (p.cod <> -1) Do
         Begin
           // SECTOR 4- ACA SE VAN A ESTAR PROCESANDO TODOS LOS DATOS POR ESCUELA (EN ESTE CASO CADA ESCUELA)
-          escTot := escTot +1;
           escLoc := escLoc +1;
+          escTot := escTot +1;
           cantAlu := 0;
           escuela := p.esc; //corte de control x escuela
           if p.loc = 'daireaux' then
             procDig(p.tit,p.cod);
-          While (p.esc = escuela) And (p.cod <> 0) Do
+          While (p.esc = escuela) And (p.cod <> -1) Do
             Begin
+              
               cantAlu := cantAlu + p.part;
               leerProyecto(p,c);
             End;
@@ -152,5 +133,6 @@ Begin
 
   // SECTOR 7- ACA INFORMO TODO LO QUE ME PIDEN EN GENERAL Y SIN QUE DEPENDA DEL CORTE DE CONTROL DE LOCALIDAD
   writeln(escTot,' escuelas presentaron proyectos en el año 2020');
-  writeln('Las dos escuelas con mayor numero de alumnos participantes fueron: 1.',escMax1,' 2.',escMax2);
+  if escTot >= 2 then
+    writeln('Las dos escuelas con mayor numero de alumnos participantes fueron: 1.',escMax1,' 2.',escMax2);
 End.
