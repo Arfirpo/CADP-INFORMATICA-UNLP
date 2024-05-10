@@ -39,6 +39,6 @@ c. Si se desea cambiar la línea 11 por la sentencia: "for i:=1 to 9 do"
 Respuesta: "numeros[i+1] := numeros[i+1] + numeros[i]";
 
 d. Qué valores están contenidos en la variable numeros si la líneas 11 y 12 se reemplazan por: 
-    for i:=1 to 9 do numeros[i+1] := numeros[i];
+  for i:=1 to 9 do numeros[i+1] := numeros[i];
 Respuesta: 1 1 1 1 1 1 1 1 1 1.
 }
