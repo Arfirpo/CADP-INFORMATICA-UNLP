@@ -7,7 +7,7 @@ Type
   vNum = array [1..dimF] of integer;
 
 
-{procedimiento para cargar el vector}
+{procedimiento para cargar el vector numerico}
 procedure cargarVector(var v: vNum; var dimL: integer);
 Var
   num: integer;
@@ -23,6 +23,7 @@ Begin
     end;
 end;
 
+{procedimiento para cargar variables X e Y}
 procedure cargarXY(var x,y: integer);
 begin
   write('Ingrese la posicion X: ');
@@ -86,6 +87,7 @@ begin
         begin
           write(v[i],' ');
         end;
+  writeln();
 end;
 
 {e. utilizando el modulo del inciso d. para rehacer los incisos a., b. y c.}
@@ -112,13 +114,13 @@ begin
   writeln();
 
   {ejercicio c. rehecho}
-  for i:= y div 2 downto x do
+  for i:= (y div 2){}ghjk mn 0 1 downto x do
     begin
       write(v[i],' ');
     end;
 
   writeln();
-  
+
   for i:= ((y div 2) + x) to y do
     write(v[i],' ');
     writeln();  
@@ -135,9 +137,9 @@ Begin
   x := 0;
   y := 0;
   cargarVector(v,dimL);
-  // imprimirTot(v);
-  // imprimirTotInv(v);
-  // imprimirMid(v,dimL);
-  // imprimirXY(v,x,y)
-  imprimirXYplus1(v,dimL,x,y)
+  imprimirTot(v);               //3.a
+  imprimirTotInv(v);            //3.b
+  imprimirMid(v,dimL);          //3.c
+  imprimirXY(v,x,y);            //3.d
+  imprimirXYplus1(v,dimL,x,y)   //3.e
 End.
