@@ -1,4 +1,4 @@
-Program ejercicio4cP4;
+Program ejercicio4eP4;
 
 const
   dimF = 100;
@@ -24,14 +24,18 @@ Begin
 end;
 
 
-function promVector(v: vNum; dimL: integer):integer;
+function maxVector(v: vNum; dimL: integer):integer;
 var
-  i: integer;
+  maxPos, i: integer;
 begin
-sumaVector := 0;
+  maxVector := -1;
   for i := 1 to dimL do
-    promVector := promVector + v[i];
-  promVector := promVector div dimL;
+    if v[i] > maxVector then
+      begin
+        maxVector := v[i];
+        maxPos := i;
+      end;
+  maxVector := maxPos;
 end;
 
 
@@ -39,7 +43,6 @@ procedure imprimirTot(v: vNum; dimL: integer);
 Var
   i: integer;
 Begin
-  write('El vector esta cargado con los valores: ');
   for i := 1 to dimL do
     write(v[i],' ');
     writeln(' ');
@@ -52,6 +55,7 @@ Var
 Begin
   dimL := 0;
   cargarVector(v,dimL);
+  write('El vector esta cargado con los siguientes valores: ');
   imprimirTot(v,dimL);
-  writeln('La suma de los valores del vector es: ',sumaVector(v,dimL));
+  writeln('El valor mas grande cargado en el vector esta en la posicion: ',maxVector(v,dimL));  
 End.

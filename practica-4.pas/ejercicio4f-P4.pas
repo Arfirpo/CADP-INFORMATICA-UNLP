@@ -1,4 +1,4 @@
-Program ejercicio4cP4;
+Program ejercicio4fP4;
 
 const
   dimF = 100;
@@ -24,16 +24,19 @@ Begin
 end;
 
 
-function promVector(v: vNum; dimL: integer):integer;
+function minVector(v: vNum; dimL: integer):integer;
 var
-  i: integer;
+  i,minPos: integer;
 begin
-sumaVector := 0;
+  minVector := 9999;
   for i := 1 to dimL do
-    promVector := promVector + v[i];
-  promVector := promVector div dimL;
+    if v[i] < minVector then
+      begin
+        minVector := v[i];
+        minPos := i;
+      end;
+    minVector := minPos;
 end;
-
 
 procedure imprimirTot(v: vNum; dimL: integer);
 Var
@@ -45,6 +48,7 @@ Begin
     writeln(' ');
 end;
 
+
 {programa principal}
 Var 
   dimL: integer;
@@ -53,5 +57,5 @@ Begin
   dimL := 0;
   cargarVector(v,dimL);
   imprimirTot(v,dimL);
-  writeln('La suma de los valores del vector es: ',sumaVector(v,dimL));
+  writeln('El numero mas chico del vector se encuentra en la posicion: ',minVector(v,dimL));         
 End.
