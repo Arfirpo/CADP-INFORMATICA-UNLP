@@ -1,4 +1,4 @@
-Program ejercicio5P4;
+Program ejercicio6P4;
 
 const
   dimF = 100;
@@ -57,34 +57,24 @@ begin
   v[posY] := aux;
 end;
 
-function maxVector(v: vNum; dimL: integer):integer;
+procedure posMinMaxV(v: vNum; dimL: integer; var posX,posY: integer);
 var
-  maxPos, i: integer;
+  i,min,max: integer;
 begin
-  maxVector := -1;
+  min := 9999;
+  max := -1;
   for i := 1 to dimL do
-    if v[i] > maxVector then
+    if v[i] > max then
+    begin
+      max := v[i];
+      posX := i;
+    end;
+    if v[i] < min then
       begin
-        maxVector := v[i];
-        maxPos := i;
+        min := v[i];
+        posY := i;
       end;
-  maxVector := maxPos;
 end;
-
-function minVector(v: vNum; dimL: integer):integer;
-var
-  i,minPos: integer;
-begin
-  minVector := 9999;
-  for i := 1 to dimL do
-    if v[i] < minVector then
-      begin
-        minVector := v[i];
-        minPos := i;
-      end;
-    minVector := minPos;
-end;
-
 
 procedure imprimirTot(v: vNum; dimL: integer);
 Var
@@ -102,10 +92,11 @@ Var
   v: vNum;
 Begin
   dimL := 0;
+  posX := 0;
+  posY := 0;
   cargarVector(v,dimL);
   imprimirTot(v,dimL);            // imprime los valores cargados en el vector originalmente
-  posX := maxVector(v,dimL);      //la variable posX almacena la posicion del valor mas grande del vector, calculado por la función maxVector. 
-  posY := minVector(v,dimL);      //la variable posY almacena la posicion del valor mas chico del vector, calculado por la función minVector. 
+  posMinMaxV(v,dimL,posX,posY);      
   x := v[posX];                   //la variable x almacena el valor mas grande del vector, obtenido a traves del indice de la posicion calculada anteriormente. 
   y := v[posY];                   //la variable y almacena el valor mas chico del vector, obtenido a traves del indice de la posicion calculada anteriormente.
   posicionVectorXY(v,dimL,x,y,posX,posY);
