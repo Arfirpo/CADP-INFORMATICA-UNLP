@@ -10,23 +10,22 @@ Type
 {procedimiento para cargar el vector numerico}
 procedure cargarVector(var v: vNum; var dimL: integer);
 Var
-  num, i: integer;
+  num: integer;
 Begin
-  i := 1;
   write('Ingrese un numero: ');   
   read(num);         
 {como no pretendo cargar el vector completo, utilizo la esctructura de control WHILE.
 agrego una condicion de corte (num <> 0) y, si no se cumple la condicion, con (dimL < diF) 
 me aseguro que si la dimension logica iguala a la dimension fisica, el while culmine.}
-  while (num <> 0) and (dimL < dimF) do   
+  while (num <> 0) and (dimL <= dimF) do   
     begin
-      i := i +1;
       dimL := diml +1;                // aumento la dimension logica en +1.
+      v[dimL] := num;                 // almaceno, en la posicion que valga i del vector, el valor de num.
       write('Ingrese un numero: ');   
       read(num);                      // ingreso un numero entero.
-      v[i] := num;                    // almaceno, en la posicion que valga i del vector, el valor de num .
     end;
 end;
+
 
 {procedimiento para cargar variables X e Y}
 procedure cargarX(var x: integer);
