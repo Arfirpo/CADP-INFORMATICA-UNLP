@@ -32,10 +32,17 @@ end;
 procedure informar(c: vNum);
 Var
   i: rango;
+  maxRep: integer;
 begin
+  maxRep := -1;
   for i := 0 to dimF do
-    if c[i] > 1 then
-      writeln('Numero ',i,': ',c[i],' veces.');
+    begin
+      if c[i] > maxRep then
+        maxRep := i;    
+      if c[i] > 1 then
+        writeln('Numero ',i,': ',c[i],' veces.');     
+    end;
+  writeln('El digito mas leido fue el ', maxRep);
   write('Los digitos que no tuvieron ocurrencias son: ');
   for i := 0 to dimF do
     if c[i] = 0 then
@@ -70,4 +77,3 @@ Begin
   inicializarC(c);
   procesarC(c);
 End.
-
