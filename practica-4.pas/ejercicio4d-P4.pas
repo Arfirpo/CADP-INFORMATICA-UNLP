@@ -1,4 +1,4 @@
-Program ejercicio4cP4;
+Program ejercicio4dP4;
 
 const
   dimF = 100;
@@ -24,7 +24,7 @@ Begin
 end;
 
 
-procedure sumaVector(v: vNum; dimL: integer; var sumaV: integer);
+procedure promVector(v: vNum; dimL: integer; var sumaV: integer; var promV: real);
 var
   i: integer;
 begin
@@ -32,10 +32,11 @@ begin
     begin
       sumaV := sumaV + v[i];
     end;
+  promV := sumaV div dimL;
 end;
 
 
-procedure imprimirTot(v: vNum; dimL: integer; sumaV: integer);
+procedure imprimirTot(v: vNum; dimL: integer; sumaV: integer; promV: real);
 Var
   i: integer;
 Begin
@@ -43,16 +44,19 @@ Begin
     write(v[i],' ');
     writeln(' ');
   writeln('La suma total de todos los valores cargados en el vector es: ',sumaV);
+  writeln('La suma total de todos los valores cargados en el vector es: ',promV:0:2);
 end;
 
 {programa principal}
 Var 
   dimL,sumaV: integer;
+  promV: real;
   v: vNum;
 Begin
   dimL := 0;
   sumaV := 0;
+  promV := 0;
   cargarVector(v,dimL);
-  sumaVector(v,dimL,sumaV);
-  imprimirTot(v,dimL,sumaV);   
+  promVector(v,dimL,sumaV,promV);
+  imprimirTot(v,dimL,sumaV,promV);   
 End.
