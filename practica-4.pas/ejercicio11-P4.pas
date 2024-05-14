@@ -22,6 +22,7 @@ type
 
   {vectores}
   vFotos = array[rango] of foto;  //vector que almacena registros de tipo foto.
+  vComent = array[rango] of integer;  //vector que almacena cantidad de comentarios de cada foto.
 
 {modulos}
 
@@ -41,12 +42,15 @@ begin
 end;
 
 //Procedimiento que recibe un vector "vFotos" vacio y, mediante una estructura for, lo carga hasta el total de la dim. Fisica con registros tipo foto.
-procedure cargarVector(var pic: vFotos);
+procedure cargEinicVector(var pic: vFotos; var c: vComent);
 var
   i: rango;
 begin
   for i := 1 to dimF do
-    leerFoto(pic,i);
+    begin
+      leerFoto(pic,i);            //cargo por indice el vector de registros.
+      c[i] := 0;                  //cargo por indice el vector contador.
+    end;
 end;
 
 procedure masVista(clicks: integer; titulo: str30; var max: integer; var maxTit: str30);
@@ -58,7 +62,7 @@ begin
     end;    
 end;
 
-procedure recorrerVector(pic: vFotos);
+procedure recorrerVector(pic: vFotos; var c: vComent);
 var
   i: rango;
   max, cantMg: integer;
@@ -66,6 +70,7 @@ var
 begin
   max := -1;
   maxTit := '';
+  cantMg := 0;
   for i := 1 to dimF do
     begin
       //a.calcula cant. de clicks de cada foto y devuelve el titulo de la foto mas vista;
@@ -73,7 +78,8 @@ begin
       //b.si el autor de la foto es igual al buscado, sumamos +1 al contador de me gustas.   
       if (pic[i].aut = 'art vandelay') then
         cantMg := cantMg +1;
-      //c. ¿deberia usar un vector contador?
+      //c. voy asignandole al vector contador, por indice, la cantidad de comentarios de cada registro foto.
+      c[i] := pic[i].com;
     end;
 end;
 
@@ -82,7 +88,8 @@ end;
 {programa principal}
 var
   pic: vFotos;
+  c: vComent;
 begin
-  cargarVector(pic);
-  recorrerVector(pic);
+  cargEinicVector(pic,c);
+  recorrerVector(pic,c);
 end;
