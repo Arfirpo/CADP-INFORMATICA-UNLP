@@ -1,7 +1,8 @@
 program ejercicio8P4;
 
 const
-  dimF = 5;
+  dimF = 400;
+  condCorte = -1;
 
 {tipos de datos creados por el programador}
 type
@@ -18,20 +19,35 @@ type
 
 {modulos del programa}
 
-function cumpleDni(dni: integer): boolean;
-var
-  dig: integer;
-  soloPares: boolean;
+procedure leerAlu(var a: alumnos);
 begin
-  soloPares := true;
-  while (dni <> 0) and soloPares do
+  write('Ingrese su nro. de DNI: ');
+  readln(a.DNI);
+  if (a.DNI <> condCorte) then
+    begin
+      write('Ingrese su nro. de inscripción: ');
+      readln(a.insc);
+      write('Ingrese su nombre: ');
+      readln(a.nom);
+      write('Ingrese su apellido: ');
+      readln(a.ape);
+      write('Ingrese el año de su nacimiento: ');
+      readln(a.aNac);
+    end;
+end;
+
+procedure cargarVector(var v: vAlu; var dimL: integer);
+var
+  a: alumnos;
+begin
+  leerAlu(a);
+  while (a.DNI <> condCorte) and (dimL < dimF) do
   begin
-    dig := dni mod 10;
-    if (dig mod 2 <> 0) then
-      soloPares := false;
-    dni := dni div 10;
+    dimL := dimL +1;
+    v[dimL] := a;
+    leerAlu(a);
   end;
-  cumpleDni := soloPares;
+  writeln('Se termino de cargar el vector con exito.');
 end;
 
 procedure maxEdad(nom, ape: str50; aNac: integer; var min1, min2: integer; var minN1, minN2, minAp1, minAp2: str50);
@@ -53,42 +69,35 @@ begin
   end;
 end;
 
-procedure leerAlu(var a: alumnos);
+function cumpleDni(dni: integer): boolean;
+var
+  dig: integer;
+  soloPares: boolean;
 begin
-  write('Ingrese su nro. de inscripción: ');
-  readln(a.insc);
-  write('Ingrese su nro. de DNI: ');
-  readln(a.DNI);
-  write('Ingrese su nombre: ');
-  readln(a.nom);
-  write('Ingrese su apellido: ');
-  readln(a.ape);
-  write('Ingrese el año de su nacimiento: ');
-  readln(a.aNac);
+  soloPares := true;
+  while (dni <> 0) and (soloPares) do
+  begin
+    dig := dni mod 10;
+    if (dig mod 2 <> 0) then
+      soloPares := false;
+    dni := dni div 10;
+  end;
+  cumpleDni := soloPares;
 end;
+
+
 
 procedure informar(porcAlu: real; minN1, minN2, minAp1, minAp2: str50);
 begin
-  writeln('El porcentaje de alumnos con DNI compuesto solo por dígitos pares es de: ', porcAlu:0:2, '%.');
+  writeln('El porcentaje de alumnos con DNI compuesto solo por dígitos pares es de: ', porcAlu:2:2, '%.');
   writeln('Alumnos de mayor edad inscriptos:');
   writeln('1. ', minN1, ' ', minAp1);
   writeln('2. ', minN2, ' ', minAp2);
 end;
 
-procedure cargarVector(var v: vAlu);
-var
-  i: integer;
-  a: alumnos;
-begin
-  for i := 1 to dimF do
-  begin
-    leerAlu(a);
-    v[i] := a;
-  end;
-  writeln('Se termino de cargar el vector con exito.');
-end;
 
-procedure procesarVector(v: vAlu);
+
+procedure procesarVector(v: vAlu; dimL: integer);
 var
   cantDniPar, i, min1, min2: integer;
   minN1, minN2, minAp1, minAp2: str50;
@@ -103,7 +112,7 @@ begin
   minAp1 := '';
   minAp2 := '';
 
-  for i := 1 to dimF do
+  for i := 1 to dimL do
     begin
       if cumpleDni(v[i].DNI) then
         cantDniPar := cantDniPar + 1;
@@ -116,8 +125,10 @@ end;
 {Programa principal}
 var
   v: vAlu;
+  dimL: integer;
 begin
-  cargarVector(v);
-  procesarVector(v);
+  dimL := 0;
+  cargarVector(v,dimL);
+  procesarVector(v,dimL);
 end.
 
