@@ -1,4 +1,4 @@
-program ejercicio8P4;
+program ejercicio9P4;
 
 const
   dimF = 400;
