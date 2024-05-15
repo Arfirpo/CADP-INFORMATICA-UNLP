@@ -28,5 +28,5 @@ type
     p: vPuntos;
     r: vRelev;
   begin
-    cargarV()
+    cargarV();
   end.
