@@ -26,7 +26,7 @@ Begin
         minCentro2 := nombre;
       end;
 End;
-
+OSEA
 {compara entre universidades y devuelve la universidad con más investigadores}
 Procedure uniMaxInvest(universidad: str20; cantInvest: integer; Var max1: integer; Var maxUni: str20);
 Begin
@@ -89,8 +89,6 @@ Begin
       // SECTOR 4- ACA VA TODO LO QUE ME PIDEN ACTUALIZAR O INFORMAR POR UNIVERSIDAD
       writeln('La universidad ',universidad, ' tiene ',cantCentros,' centros de investigación en total');
       uniMaxInvest(universidad,cantInvest,max1,maxUni);
-      
-      
     End;
 
 
