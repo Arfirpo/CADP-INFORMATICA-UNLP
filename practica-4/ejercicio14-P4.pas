@@ -7,23 +7,21 @@ program ejercicio13P4;
 const
   dimF = 1000;      // cantidad de proyectos de software mas activos de 2017.
   dimF2 = 5;        // cantidad de desarrolladores de un proyecto de software.
-  vH_Af = 35.20;    // valor hora analista funcional.
-  vH_P = 27.45;     // valor hora programador.
-  vH_Abd = 31.03;   // valor hora administrador de base de datos.
-  vH_As = 44.28;    // valor hora arquitecto de software.
-  vH_Ars = 39.87;   // valor hora administrador de redes y seguridad.
   condicion = -1;   //condicion para finalizar el programa.
 
 
 type
   str30 = string[30];
-  codigo = 1..1000;
-  tipo = 1..dimF2;
-  rangoProy = 1..dimF;
-  rangoD = 1..5;
+  rango = 1..dimF;
+  rango2 = 1..dimF2;
 
-  vProyecto = array[rangoD] of participantes;  //vector de registros.
-  vPro17 = array[rangoP] of vProyecto;         //vecotr de vectores.
+  datos = record
+    mInv: real;
+    cantA: integer;
+  end;
+
+  vDatos = array[rango] of datos; 
+  vSalarios = array[rango2] of real;
 
   participantes = record
     pais: str30;
@@ -33,19 +31,66 @@ type
     ht: real;
   end;
 
-  arquis = record
-    montoTotal: real;
-    cantArquis: integer;
-  end;
 
 {modulos}
 
+function invArg(hTrab: real; pais:str30; salario: real):real;
+begin
+  if pais = 'argentina' then
+    invArg := hTrab * salario;
+end;
+
+function totAbd(hTrab: real; rol: rango2):integer;
+begin
+  if rol = 3 then
+    totAbd := hTrab;
+  else
+    hTrab := 0;
+end;
+
+
+  procedure cargarVecSal(var s: vSalarios);
+  var
+    i: rango2;
+  begin
+    for i := 1 to dimF2 do
+      begin
+        writeln('Ingrese el salario para el codigo ',i);
+        read(s[i]);  
+      end;
+  end;
+
+  procedure inicializarVecDatos(var d: vDatos);
+  var
+    i: rango;
+  begin
+    for i := 1 to dimF do
+      begin
+        d[i].mInv := 0;
+        d[i].cantA := 0;
+      end;
+  end;
 
   {programa principal}
   var
-    
+    s: vSalarios;
+    d: vDatos;
+    mInvArg: real;
+    horasTrabajadasABD: integer;
+    p: participantes;
+    codMinProy: rango;
   begin
-    
+    cargarVecSal(s);
+    inicializarVecDatos(d);
+    mInvArg := 0;
+    hTrabABD := 0;
+    leerParticipante(p);
+    while (p.cod <> -1) do
+      begin
+        mInvArg := mInvArg + invArg(p.ht,p.pais,s[p.rol]);
+        hTrabABD := hTrabABD + totAbd(p.ht,s[p.rol]);
+        d[p.cod].mInv := d[p.cod].mInv + 
+      end;
   end.
 
   {--------------------------------------------------------------------------------}
