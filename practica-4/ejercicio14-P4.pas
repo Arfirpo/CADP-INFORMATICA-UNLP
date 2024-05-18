@@ -15,13 +15,16 @@ type
   rango = 1..dimF;
   rango2 = 1..dimF2;
 
+  desarrolladores = record
+    cod:  rango2;
+    rol:  str30;
+    vHora:  real;
+  end;
+
   datos = record
     mInv: real;
     cantA: integer;
   end;
-
-  vDatos = array[rango] of datos; 
-  vSalarios = array[rango2] of real;
 
   participantes = record
     pais: str30;
@@ -31,6 +34,8 @@ type
     ht: real;
   end;
 
+  vDatos = array[rango] of datos; 
+  vSalarios = array[rango2] of desarrolladores;
 
 {modulos}
 
@@ -48,6 +53,33 @@ begin
     hTrab := 0;
 end;
 
+function totArq(rol: rango2):integer;
+begin
+  if(rol = 3) then
+    totArq := 1;
+  else
+    totArq := 0;
+end;
+
+  procedure leerSalarios(sal: desarrolladores);
+  begin
+    write('Ingresar el codigo de desarrollador: ');
+    readln(sal.cod);
+    write('Ingresar el rol de desarrollador: ');
+    readln(sal.rol);
+    write('Ingresar el valor hora de desarrollador: ');
+    readln(sal.vHora);
+  end;
+
+  // procedure leerParticipante(p: participantes);
+  // begin
+  //   write('Ingresar el pais del participante: ');
+  //   readln(p.pais);
+  //   write('Ingresar el rol de desarrollador: ');
+  //   readln(sal.rol);
+  //   write('Ingresar el valor hora de desarrollador: ');
+  //   readln(sal.vHora);
+  // end;
 
   procedure cargarVecSal(var s: vSalarios);
   var
@@ -56,7 +88,7 @@ end;
     for i := 1 to dimF2 do
       begin
         writeln('Ingrese el salario para el codigo ',i);
-        read(s[i]);  
+        leerSalarios(s[i]);  
       end;
   end;
 
@@ -89,7 +121,9 @@ end;
       begin
         mInvArg := mInvArg + invArg(p.ht,p.pais,s[p.rol]);
         hTrabABD := hTrabABD + totAbd(p.ht,s[p.rol]);
-        d[p.cod].mInv := d[p.cod].mInv + 
+        d[p.cod].mInv := d[p.cod].mInv + (p.ht * s[p.rol]);
+        d[p.cod].cantA := d[p.cod].cantA + totArq(p.rol);
+        leerParticipante(p);
       end;
   end.
 
