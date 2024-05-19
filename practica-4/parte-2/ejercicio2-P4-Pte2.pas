@@ -45,10 +45,18 @@ begin
       pos := pos +1;
 end;
 
+procedure busqueda(a: vStr20; dimL: integer; var pos: integer; var esta: boolean; var nom: str20);
+begin
+  write('Nombre a buscar: ');
+  readln(nom);
+  buscarEnV(a,dimL,nom,pos,esta);
+end;
+
 procedure eliminarDeV(a: vStr20; var dimL: integer; nom: str20; pos: integer; var elim:boolean);
 var
   i: integer;
 begin
+  elim := false;
   if ((pos >= 1) and (pos <= dimL)) then
     begin
       for i := pos to (dimL -1) do
@@ -58,24 +66,10 @@ begin
     end;
 end;
 
-
-{programa principal}
+procedure eliminacion(var a:vStr20; var dimL: integer; esta: boolean; pos: integer; nom: str20);
 var
-  a: vStr20;
-  dimL,pos: integer;
-  nom: str20;
-  esta,elim: boolean;
+  elim: boolean;
 begin
-  dimL := 0;
-  pos := 1;
-  esta := false;
-  elim := false;
-  cargarV(a,dimL);
-  informarV(a,dimL);
-  writeln();
-  write('Nombre a buscar: ');
-  readln(nom);
-  buscarEnV(a,dimL,nom,pos,esta);
   if esta then
     begin
       writeln('El nombre estaba en el vector.');
@@ -84,7 +78,92 @@ begin
       if elim then
         writeln();
         writeln('El nombre fue elimiado del vector con exito.');
-    end;
+    end
   else
     writeln('El nombre no se encontro en el vector.');
+end;
+
+procedure insertarEnV(var a: vStr20; var dimL: integer; pos: integer; var insert: boolean; nom: str20);
+var
+  i: integer;
+begin
+  insert := false;
+  if (((dimL + 1) <= dimF) and (pos >= 1) and (pos <= dimL)) then
+    begin  
+      for i := dimL downTo pos do
+        a[i+1] := a[i];
+      insert := true;
+      a[pos] := nom;
+      dimL := dimL +1;      
+    end;
+end;
+
+procedure insercion(var a: vStr20; var dimL: integer);
+var
+  pos: integer;
+  insert: boolean;
+  nom: str20;
+begin
+  write('Ingrese el nombre del alumno a insertar: ');
+  readln(nom);
+  write('En que posicion desea insertar al alumno?: ');
+  readln(pos);
+  insertarEnV(a,dimL,pos,insert,nom);
+  if insert then
+    begin 
+      writeln('El alumno se inserto con exito.');
+      informarV(a,dimL);
+    end
+  else
+    writeln('No se pudo insertar el alumno.');
+end;
+
+procedure agregarEnV(var a: vStr20; var dimL: integer; var agregado: boolean; nom: str20);
+begin
+  if ((dimL + 1) <= dimF) then
+    begin
+      agregado := true;
+      dimL := dimL +1;
+      a[dimL] := nom;
+    end;
+end;
+
+procedure agregacion(var a: vStr20; var dimL: integer);
+var
+  agregado: boolean;
+  nom: str20;
+begin
+  agregado := false;
+  write('Ingrese el nombre del alumno a agregar: ');
+  readln(nom);
+  agregarEnV(a,dimL,agregado,nom);
+  if agregado then
+    begin
+      writeln('El alumno fue agregado con exito.');
+      informarV(a,dimL);
+    end
+  else
+    writeln('El alumno no pudo ser agregado.');
+end;
+
+{programa principal}
+var
+  a: vStr20;
+  dimL,pos: integer;
+  esta: boolean;
+  nom: str20;
+begin
+  dimL := 0; 
+  pos := 0;
+  nom := '';
+  esta := false;
+  cargarV(a,dimL);
+  informarV(a,dimL); 
+  writeln();
+  //agregacion(a,dimL);
+  //insercion(a,dimL);
+  //busqueda(a,dimL,pos,esta,nom);
+  //eliminacion(a,dimL,esta,pos,nom);
 end.
+
+
