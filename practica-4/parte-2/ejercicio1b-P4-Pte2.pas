@@ -5,6 +5,7 @@ uses
 
 const
   dimF =  500;
+  corte = 50;
 
   type
     rango = 1..dimF;
@@ -12,21 +13,24 @@ const
 
 {modulos}
 
-//funcion para buscar un elemento en vector desordenado.
+//funcion para buscar un elemento en vector ordenado, busqueda dicotomica.
 function estaEnV(e: vEnteros; dimL,n: integer):boolean;
 var
-  pos: integer;
+  inf,sup,med: integer;
   ok: boolean;
 begin
-  pos := 1;
   ok := false;
-  while (pos < dimL) and (not ok) do
+  inf := 1; sup := dimL; med := (inf + sup) div 2;
+  while (inf <= sup) and (n <> e[med]) do
     begin
-      if n = e[pos] then
-        ok := true
+      if n < e[med] then
+        sup := med -1
       else
-        i := pos +1;
+        inf := med +1;
+      med := (inf + sup) div 2;
     end;
+  if(inf <= sup) and(n = e[med]) then
+    ok := true;
   estaEnV := ok;
 end;
 
@@ -47,12 +51,12 @@ procedure cargarV(var e: vEnteros; var dimL: integer);
 var
   num: integer;
 begin
-  num := Random(100);
-  while (dimL < dimF) and (num <> 0) do
+  num := 1;
+  while (dimL < dimF) and (num <> corte) do
     begin
       diml := dimL +1;
       e[dimL] := num;      
-      num := Random(100);
+      num := num + 1;
     end;
   imprimirVector(e,dimL);
 end;

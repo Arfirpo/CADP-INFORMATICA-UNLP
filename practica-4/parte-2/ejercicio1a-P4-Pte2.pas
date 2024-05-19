@@ -15,21 +15,19 @@ const
 //funcion para buscar un elemento en vector desordenado. 
 function estaEnV(e: vEnteros; dimL,n: integer):boolean;
 var
-  inf,sup,med: integer;
+  pos: integer;
   ok: boolean;
 begin
+  pos := 1;
   ok := false;
-  inf := 1; sup := dimL; med := (inf + sup) div 2;
-  while (inf <= sup) and (n <> e[med]) do
+  while (pos < dimL) and (not ok) do
     begin
-      if n < e[med] then
-        sup := med -1
+      if n = e[pos] then
+        ok := true
       else
-        inf := medio +1;
-      med := (inf + sup) div 2;
+        i := pos +1;
     end;
-  if(inf <= sup) and(n = e[med]) then
-    estaEnV := true;
+  estaEnV := ok;
 end;
 
 
