@@ -52,7 +52,7 @@ begin
   buscarEnV(a,dimL,nom,pos,esta);
 end;
 
-procedure eliminarDeV(a: vStr20; var dimL: integer; nom: str20; pos: integer; var elim:boolean);
+procedure eliminarDeV(var a: vStr20; var dimL: integer; nom: str20; pos: integer; var elim:boolean);
 var
   i: integer;
 begin
