@@ -86,29 +86,49 @@ begin
   end;
 end;
 
+procedure imprimirV(a: vAlu; dimL: integer);
+var
+  i: integer;
+begin
+    for i := 1 to dimL do
+    begin
+      writeln('Codigo: ', a[i].cod);
+      writeln('Nombre y Apellido: ', a[i].nomYape);
+      writeln('Alumno ', i);
+      writeln('Asistencias: ', a[i].asis);
+      writeln('--------------------------');
+    end;
+end;
+
+function buscarAlu(a: vAlu; dimL: integer):integer;
+var
+  i,cod,inf,med,sup: integer;
+begin
+  write('Ingrese codigo del alumno: ');
+  readln(cod);
+  inf := 1; sup := dimL; med := (inf + sup div 2);
+  if cod >= 1 and cod <= dimF then
+    for i := 1 to dimL do
+    begin
+      
+    end;
+
+end;
+
 { Programa principal }
 var
   a: vAlu;
   codigos: codUsados;
   dimL: integer;
-  i: integer;
+  i, posAlu: integer;
 begin
   Randomize;
   dimL := 0;
   inicializarCodigos(codigos);
   cargarV(a, dimL, codigos);
-
-  // Mostrar los datos generados para verificar
-  for i := 1 to dimL do
-  begin
-    writeln('Alumno ', i);
-    writeln('Codigo: ', a[i].cod);
-    writeln('Nombre y Apellido: ', a[i].nomYape);
-    writeln('Asistencias: ', a[i].asis);
-    writeln('--------------------------');
-  end;
+  {imprimirV(a,dimL);}
+  posAlu := buscarAlu(a,dimL);
 end.
-
 
 
 
