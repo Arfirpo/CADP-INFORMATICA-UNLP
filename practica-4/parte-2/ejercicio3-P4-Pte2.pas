@@ -6,7 +6,7 @@ uses
 const
   dimF = 31;  // Número de días en un mes
   dimF2 = 200; // Máximo número de viajes
-  corte = 0;   // Marca de fin de datos
+  corte = 0;  
 
 type
   rangoD = 1..dimF;
