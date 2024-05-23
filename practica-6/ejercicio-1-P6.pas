@@ -3,7 +3,7 @@
     b. La lista queda conformada en sentido inverso al orden de ingreso: 48 - 13 - 21 - 10. Cada valor se agrega adelante, quedando primero en la lista el último que se ingresa.
 }
 
-program JugamosConListas;
+program ejercicio1P6;
 
 type
   lista = ^nodo;
