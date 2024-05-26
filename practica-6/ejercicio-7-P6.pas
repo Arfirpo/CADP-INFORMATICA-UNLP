@@ -206,6 +206,8 @@ procedure procesarLista(l: lSondas);
     while l <> nil do begin
       cantTot := cantTot +1;
       costTot := costTot + (l^.dato.cConst + l^.dato.cMant);
+      writeln('--------------------------------------------------');
+      writeln('La sonda "',l^.dato.nom,'", que estudia el espectro ',l^.dato.EspElect,', tiene un costo de construccion de $',l^.dato.cConst:2:2,', un costo de mantenimiento de $',l^.dato.cMant:2:2,',y un costo total de ',(l^.dato.cConst + l^.dato.cMant):2:2);
         l := l^.sig;
       end;
     writeln('--------------------------------------------------');
