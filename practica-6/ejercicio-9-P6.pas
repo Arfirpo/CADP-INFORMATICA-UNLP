@@ -155,18 +155,40 @@ begin
   estaOrdenada := ok;
 end;
 
+
+function estaEnListaD(l: lista; v: integer): boolean;
+var
+  aux: lista;
+  esta: boolean;
+begin
+  esta := false;
+  aux := l;
+  while ((aux <> nil) and (esta = false)) do begin
+    if (aux^.dato = v) then
+      esta := true;
+    else
+      aux := aux^.sig;
+  end;
+  buscar := esta;
+end;
+
+function estaEnListaO(l: lista; v: integer): boolean;
+var
+  aux: lista;
+  esta: boolean;
+begin
+  esta := false;
+  aux := l;
+  while ((aux <> nil) and (aux^.dato < v)) do begin
+    aux := aux^.sig;
+  end;
+  if (aux <> nil) and (aux^.dato = valor) then
+    esta := true;
+  buscar := esta;  
+end;
+
+
 function eliminarNodo(var l: lista; v: integer): lista;
-
-  function estaEnListaD(l: lista; v: integer): boolean;
-  begin
-    
-  end;
-
-  function estaEnListaO(l: lista; v: integer): boolean;
-  begin
-    
-  end;
-
 begin
   if (estaOrdenada(l)) then
     estaEnListaO(l,v)
@@ -249,6 +271,11 @@ begin
     end;
     imprimirNodo(pri);
     valor := Random(21);
-    eliminarNodo(pri,valor);
+    if estaOrdenada(pri) then
+      if(estaEnListaO(pri,valor)) then
+        eliminarNodo(pri,valor)
+    else
+      if(estaEnListaD(pri,valor)) then
+        eliminarNodo(pri,valor);
   end;
 end.
