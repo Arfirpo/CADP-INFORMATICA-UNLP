@@ -155,6 +155,25 @@ begin
   estaOrdenada := ok;
 end;
 
+function eliminarNodo(var l: lista; v: integer): lista;
+
+  function estaEnListaD(l: lista; v: integer): boolean;
+  begin
+    
+  end;
+
+  function estaEnListaO(l: lista; v: integer): boolean;
+  begin
+    
+  end;
+
+begin
+  if (estaOrdenada(l)) then
+    estaEnListaO(l,v)
+  else
+    estaEnListaD((l,v));
+end;
+
 // Módulo que recorre e imprime los valores de la lista.
 procedure imprimirNodo(L: lista);
 var
@@ -196,7 +215,7 @@ var
 begin
   Randomize;
   pri := nil;
-  write('Elija un criterio de lista: 1.-desordenada / 2.- ordenada. : ');
+{  write('Elija un criterio de lista: 1.-desordenada / 2.- ordenada. : ');
   read(valor);
   while valor <> -1 do begin
     if (valor = 1) then begin
@@ -221,6 +240,15 @@ begin
     end;
     writeln();
     write('Elija un criterio de lista: 1.-desordenada / 2.- ordenada. : ');
-    read(valor);
+    read(valor);}
+    valor := Random(21);
+    while (valor <> 0) do
+    begin
+      insertarOrdenado(pri, valor);
+      valor := Random(21);
+    end;
+    imprimirNodo(pri);
+    valor := Random(21);
+    eliminarNodo(pri,valor);
   end;
 end.
