@@ -106,7 +106,7 @@ type
 
 { Módulos }
 
-// Arma listas desordenadas.
+// Arma listas desordenadas (agregar adelante).
 procedure armarNodo(var L: lista; v: integer);
 var
   aux: lista;
@@ -187,13 +187,47 @@ begin
   buscar := esta;  
 end;
 
+//procedimiento que elimina el nodo (si el elemento puede o no existir en la lista).
+procedure eliminarNodoA(var l: lista; v: integer; var eliminado: boolean);
+var 
+  ant, act: lista;
+begin 
+  eliminado := false;
+  act := l;
+  {Recorro mientras no se termine la lista y no encuentre el elemento}
+  while  (act <> nil)  and (act^.dato <> v) do begin
+      ant := act;
+      act := act^.sig
+  end;   
+  if (act <> nil) then begin
+    eliminado := true; 
+    if (act = l) then  
+      l := act^.sig;
+    else  
+      ant^.sig:= act^.sig;
+    dispose (act);
+  end;
+end;
 
-function eliminarNodo(var l: lista; v: integer): lista;
-begin
-  if (estaOrdenada(l)) then
-    estaEnListaO(l,v)
-  else
-    estaEnListaD((l,v));
+//procedimiento que elimina el nodo (si el elemento seguro existe).
+Procedure eliminarNodoB (var l: lista; v: integer; var eliminado: boolean);
+var 
+  ant, act: lista;
+begin 
+  eliminado := false;
+  act := l;
+  {Recorro mientras no encuentre el elemento}
+  while (act^.dato <> v) do begin   //NO HACE FALTA PREGUNTAR POR NIL 
+      ant := act;
+      act := act^.sig
+  end;   
+  //SI SALE DEL WHILE ES PORQUE YA LO ENCONTRÓ SEGURO
+  eliminado := true; 
+  if (act = l) then  
+      l := act^.sig;
+  else  
+      ant^.sig:= act^.sig;
+  dispose (act);
 end;
 
 // Módulo que recorre e imprime los valores de la lista.
@@ -270,12 +304,9 @@ begin
       valor := Random(21);
     end;
     imprimirNodo(pri);
+
+    
     valor := Random(21);
-    if estaOrdenada(pri) then
-      if(estaEnListaO(pri,valor)) then
-        eliminarNodo(pri,valor)
-    else
-      if(estaEnListaD(pri,valor)) then
-        eliminarNodo(pri,valor);
+    eliminarNodo(pri,valor);
   end;
 end.
