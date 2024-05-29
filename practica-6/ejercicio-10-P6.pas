@@ -5,108 +5,113 @@ número (que es el siguiente al último número entregado).
 El cliente quedará esperando a ser llamado por su número, en cuyo caso sale de la lista de espera. 
 Se pide:
     a. Definir una estructura de datos apropiada para representar la lista de espera de clientes.
+
     b. Implementar el módulo RecibirCliente, que recibe como parámetro el DNI del cliente y la lista de clientes en espera, asigna un número al cliente y retorna la lista de espera actualizada.
+
     c. Implementar el módulo AtenderCliente, que recibe como parámetro la lista de clientes en espera,
     y retorna el número y DNI del cliente a ser atendido y la lista actualizada. El cliente atendido debe
     eliminarse de la lista de espera.
+
     d. Implementar un programa que simule la atención de los clientes. En dicho programa, primero
     llegarán todos los clientes juntos, se les dará un número de espera a cada uno de ellos, y luego se
     los atenderá de a uno por vez. El ingreso de clientes se realiza hasta que se lee el DNI 0, que no
     debe procesarse.
 }
 
-program ejercicio10P6;
+program ListaDeEsperaClientes;
 
 type
-  lClientes = ^clientes;
-
-  cliente = record
-    turno: integer;
-    dni: integer;
+  Cliente = record
+    DNI: longint;
+    Numero: longint;
   end;
 
-  clientes = record
-    dato: cliente;
-    sig: lClientes;
+  Nodo = ^NodoLista;
+  NodoLista = record
+    Datos: Cliente;
+    Siguiente: Nodo;
   end;
 
-{modulos}
+  Cola = record
+    Frente, Final: Nodo;
+    UltimoNumero: longint;
+  end;
 
-{b. Implementar el módulo RecibirCliente, que recibe como parámetro el DNI del cliente y la lista de clientes en espera}
-procedure recibirCliente(var l: lClientes; dni: integer);
+procedure InicializarCola(var Q: Cola);
+begin
+  Q.Frente := nil;
+  Q.Final := nil;
+  Q.UltimoNumero := 0;
+end;
 
-  //a. Definir una estructura de datos apropiada para representar la lista de espera de clientes.
-  procedure agregarAlFinal(var l: lClientes; c: cliente);
-  var
-    aux,nuevo: lClientes;
+function ColaVacia(Q: Cola): Boolean;
+begin
+  ColaVacia := Q.Frente = nil;
+end;
+
+procedure RecibirCliente(DNI: longint; var Q: Cola);
+var
+  Nuevo: Nodo;
+begin
+  New(Nuevo);
+  Q.UltimoNumero := Q.UltimoNumero + 1;
+  Nuevo^.Datos.DNI := DNI;
+  Nuevo^.Datos.Numero := Q.UltimoNumero;
+  Nuevo^.Siguiente := nil;
+  if Q.Final = nil then
   begin
-    new(nuevo);
-    nuevo^.dato := c;
-    nuevo^.sig := nil;
+    Q.Frente := Nuevo;
+  end
+  else
+  begin
+    Q.Final^.Siguiente := Nuevo;
+  end;
+  Q.Final := Nuevo;
+end;
 
-    if (l = nil) then
-      l := nuevo
-    else
+procedure AtenderCliente(var Q: Cola; var DNI, Numero: longint);
+var
+  Aux: Nodo;
+begin
+  if not ColaVacia(Q) then
+  begin
+    Aux := Q.Frente;
+    DNI := Aux^.Datos.DNI;
+    Numero := Aux^.Datos.Numero;
+    Q.Frente := Q.Frente^.Siguiente;
+    if Q.Frente = nil then
     begin
-      aux := l;
-      while (aux^.sig <> nil) do
-        aux := aux^.sig;
-      aux^.sig := nuevo;
+      Q.Final := nil;
     end;
+    Dispose(Aux);
+  end
+  else
+  begin
+    DNI := -1;
+    Numero := -1;
+    writeln('No hay clientes para atender.');
   end;
+end;
 
 var
-  c: cliente; t: integer;
+  ColaClientes: Cola;
+  DNI, turno: longint;
+
 begin
-  t := 0;
+  InicializarCola(ColaClientes);
+  
+  write('Ingrese DNI del clientes: ');
+  readln(DNI);
   while dni <> 0 do begin
-    c.dni := dni;
-    t := t + 1;
-    c.turno := t;
-    agregarAlFinal(l,c);
-    write('Ingrese su numero de documento: ');
-    readln(dni);
+    RecibirCliente(DNI, ColaClientes);
+    write('Ingrese los DNI de los clientes (0 para finalizar): ');
+    readln(DNI);
   end;
-end;
 
-
-{programa principal}
-
-var
-  lEspera: lClientes;
-  dni: integer;
-
-begin
-  lEspera := nil;
-  write('Ingrese su numero de documento: ');
-  readln(dni);
-  recibirCliente(lEspera,dni);
-
-
-
+  writeln('Atendiendo clientes:');
+  while not ColaVacia(ColaClientes) do
+  begin
+    AtenderCliente(ColaClientes, DNI, turno);
+    writeln('Atendiendo cliente con DNI: ', DNI, ' y número: ', turno);
+  end;
 end.
-
-
-
-{procedure eliminarAtendido(var l: lClientes; pos: integer);
-var
-  ant,act: lClientes;
-begin
-  
-  act := l;
-  while act^.dato.turno <> pos do begin
-    ant := act;
-    act := act^.sig;
-  end;
-  
-  if act = l then
-    l := act^.sig;
-  dispose(act);
-end;
-
-procedure atenderCliente(l: lClientes; var dniAt,turnoAt: integer);
-begin
-  dniAt := l^.dato.dni;
-  turnoAt := l^.dato.turno;
-  writeln('Siguiente: Turno N° ',dniAt,' Dni ',turnoAt);  
-end;}
