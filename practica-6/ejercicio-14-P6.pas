@@ -19,26 +19,26 @@ program ejercicio14P6;
 
 const
   dimF_alu = 1300;
-  dimF_trans = 7;
+  dimF_trans = 5;
   dimF_mes = 31;
 
 type
   cod = -1..dimF_alu;
-  dias = 1..31;
+  dias = 1..dimF_mes;
   str30 = string[30];
   rango_trans = 1..dimF_trans;
 
-rTrans = record
-  nro: 1..dimF_trans;
-  tipo: str30;
-  precio: real;
-end;
+  rTrans = record
+    nro: rango_trans;
+    tipo: str30;
+    precio: real;
+  end;
 
   viaje = record
     codigo: cod;
     dia: dias;
     fac: str30;
-    trans: integer;
+    trans: rango_trans;
   end;
 
   lViajes = ^nViajes;
@@ -75,13 +75,14 @@ var
   i: rango_trans;
   t: rTrans;
 begin
-  for i := 1 to rango_trans do
+  for i := 1 to dimF_trans do begin
     leerTransporte(t,i);
     v[i] := t;
-    c[i] := 0;
+    c[i] := 0;    
+  end;
 end;
 
-procedure generarListaV(var vL: vAlu; var cT: vCont;);
+procedure generarListaV(var vL: vAlu; var cT: vCont);
 
   procedure inicializarLista(var l: lViajes);
   begin
@@ -97,13 +98,13 @@ procedure generarListaV(var vL: vAlu; var cT: vCont;);
         repeat
         write('Ingrese dia del viaje: ');
         readln(dia);          
-        until (dia >= 1 and dia <= 31);
+        until ((dia >= 1) and (dia <= 31));
         write('Ingrese el nombre de la facultad a la que asiste el alumno: ');
         readln(fac);
         repeat
           write('Ingrese el medio de transporte utilizado: ');
           readln(trans);
-        until((trans >= 1) and (trans <= 7));
+        until((trans >= 1) and (trans <= 5));
       end;
     end;
   end;
@@ -127,113 +128,140 @@ procedure generarListaV(var vL: vAlu; var cT: vCont;);
     nue^.sig := act;
   end;
 
-
 var
-  vA: vAlu;
   rV: viaje;
-  c_dias: dias;
-  c_trans: rango_trans;
   i: integer;
 begin
   for i := 1 to dimF_alu do  //inicializo la lista de cada alumno en nil.
-    inicializarLista(v[rV.cod]); 
+    inicializarLista(vL[i]); 
+
   leerViaje(rV); //leo un viaje.
-  while (rV.cod <> -1) do begin  //si el codigo de alumno es valido.
-    c_Dias := rV.dia; //corte de control por dia del mes.
-    
-    while (rV.cod <> -1) and (rV.dia = c_dias) do begin //mientras el dia del viaje sea el mismo.
-      c_trans := rV.trans.nro; //corte de control por medio de transporte
+  while (rV.codigo <> -1) do begin  //si el codigo de alumno es valido.
+    insertarOrdenado(vL[rV.codigo],rV); //agrego el viaje a la lista ordenada de menor a mayor por dia y transp.
+    cT[rV.trans] := cT[rV.trans] + 1;
+    leerViaje(rV); //leo otro viaje
+  end;
+end;
+
+procedure procesarLista(vL: vAlu; vC: vCont; vT: vTrans);
+
+  procedure maxUso(cant: integer; transp: str30; var max1, max2: integer; var maxT1, maxT2: str30);
+  begin
+    if cant > max1 then begin
+      max2 := max1;
+      maxT2 := maxT1;
+      max1 := cant;
+      maxT1 := transp;
+    end
+    else if cant > max2 then begin
+      max2 := cant;
+      maxT2 := transp;
+    end;
+  end;
+
+  procedure procesarAlu(lV: lViajes; vT: vTrans; var cumpleA,cumpleB,cumpleD: boolean);
+  var
+    aux: lViajes;
+    c_dias: dias;
+    c_trans: rango_trans;
+    cantViajes,cantBici,cantOtro: integer;
+    gastoD: real;
+  begin
+    aux := lV;
+    cantViajes := 0;
+    cantBici := 0;
+    cantOtro := 0;
+    cumpleA := false; 
+    cumpleB := false; 
+    cumpleD := false;
+    gastoD := 0;
+    while (aux <> nil) do begin 
+      c_dias := aux^.dato.dia;
+      while (aux <> nil) and (aux^.dato.dia = c_dias) do begin
+        c_trans := aux^.dato.trans;
+        while (aux <> nil) and (aux^.dato.dia = c_dias) and ((aux^.dato.trans = c_trans)) do begin
+          gastoD := gastoD +vT[aux^.dato.trans].precio;
+          cantViajes := cantViajes + 1;
+          aux := aux^.sig;
+        end;
+        if c_trans = 5 then cantBici := cantBici +1
+        else if (c_trans >= 1) and (c_trans <= 4) then cantOtro := cantOtro + 1;
+      end;
+    end;
       
-      while (rV.cod <> -1) and (rV.dia = c_dias) and (rV.trans = c_trans) do begin ////mientras el transporte sea el mismo.
-        insertarOrdenado(v[rV.cod],rV); //agrego el viaje a la lista ordenada de menor a mayor por dia y transp.
-        leerViaje(rV); //leo otro viaje
-      end;
-      cT[c_trans] := cT[c_trans] +1;
-    end;
+    gastoD := gastoD / dimF_mes;//calculo el promedio de gasto por dia.
+    cantViajes := cantViajes div dimF_mes; //calculo el promedio de viajes por dia.
+    //si la cantidad de viajes diarios del alumno es mayor a 6
+    if (cantViajes > 6) then
+      cumpleA := true;//si el alumno hace mas de 6 viajes por dia, cumple A
+    if (gastoD > 80) then 
+      cumpleB := true;//si el alumno gasta mas de $80 por dia cumple B;
+    if (cantBici >= 1) and (cantOtro >= 1)then 
+      cumpleD := true;//si el alumno combina bici con otro otro transporte cumple D.
   end;
-end;
 
-procedure procesarAlu(lV: lViajes; vT: vTrans; var cumpleA,cumpleB: boolean);
 var
-  aux: lViajes
-  c_dias: dias;
-  c_trans: rango_trans;
-  cantViajes: integer;
-  
-  usaBici,usaOtro: boolean;
-  gastoD: real;
-begin
-  cumpleA := false; cumpleB := false;
-  aux := lV;
-  gastoD := 0;
-  cantViajes := 0;
-  while aux <> nil do begin // Calcular gasto total y cantidad de viajes por día
-    c_dias := aux^.dato.dia;
-    while aux <> nil and (aux^.dato.dia = c_dias) do begin
-      c_trans := aux^.dato.trans;
+  i,cantAluA,cantAluB,cantAluD,max1,max2: integer;
+  cumpleA,cumpleB,cumpleD: boolean;
+  maxT1, maxT2: str30;
 
-      while aux <> nil and (aux^.dato.dia = c_dias) and ((aux^.dato.trans = c_trans)) do begin
-        gastoD := gastoD +vT[aux^.dato.trans].precio;
-        aux := aux^.sig;
-      end;
-      cantViajes := cantViajes + 1;
-    end;
+begin
+  max1 := -1; max2 := -1;
+  maxT1 := ''; maxT2 := '';
+  cantAluA:= 0; cantAluB := 0; cantAluD := 0;
+  for i := 1 to dimF_alu do begin
+    //calculo los dos medios de transporte mas usados.
+    if i <= dimF_trans then
+      maxUso(vC[i],vT[i].tipo,max1,max2,maxT1,maxT2);
+    //proceso un alumno (trabajo sobre la lista de sus viajes).
+    procesarAlu(vL[i],vT,cumpleA,cumpleB,cumpleD); 
+    //luego, calculo si el alumno cumple las consignas A,B y D y lo sumo (o no) a la cuenta.
+    if (cumpleA) then
+      cantAluA := cantAluA +1;
+    if (cumpleB) then
+      cantAluB := cantAluB + 1;
+    if cumpleD then
+      cantAluD := cantAluD + 1;
   end;
-    
-  gastoD := gastoD / dimF_mes;//calculo el promedio de gasto por dia.
-  cantViajes := cantViajes / dimF_mes; //calculo el promedio de viajes por dia.
-  //si la cantidad de viajes diarios del alumno es mayor a 6
-  if (cantViajes > 6) then cumpleA := true;
-  if (gastoD > 80) then cumpleB := true;
-    
+  //Salgo del for e informo los datos obtenidos de los 1300 alumnos.
+
+  //Informo consigna A.
+  writeln('------------------------------------------------');
+  if cantAluA > 0 then
+    writeln(cantAluA,' alumno/s realiza/n mas de 6 viajes por dia')
+  else
+    writeln('Ningun alumno realiza mas de 6 viajes por dia');
+  //Informo consigna B.
+  writeln('------------------------------------------------');
+  if cantAluB > 0 then
+    writeln(cantAluB,' alumno/s gasta/n mas de $80 en viajes por dia')
+  else
+    writeln('Ningun alumno gasta mas de $80 en viajes por dia');
+  //Informo consigna C.
+  writeln('------------------------------------------------');
+  writeln('Los dos medios de transporte mas utilizados son: ');
+  writeln('1.- ',maxT1);
+  writeln('2.- ',maxT2);
+  //Informo consigna D.
+  if cantAluD > 0 then
+  writeln(cantAluD,' alumno/s combina/n bicicleta con algun otro medio de transporte')
+  else
+  writeln('Ningun alumno combina bicileta con otro medio de transporte');
+  writeln('------------------------------------------------');
 end;
 
-procedure maxUso(cant: integer; transp: str30; var max1, max2: integer; var maxT1, maxT2: str30);
-begin
-  if cant > max1 then begin
-    max2 := max1;
-    maxT2 := maxT1;
-    max1 := cant;
-    maxT1 := transp;
-  end
-  else if cant > max2 then begin
-    max2 := cant;
-    maxT2 := transp;
-  end;
-end;
+
 
 {programa principal}
 var
   vT: vTrans; 
   vL: vAlu; 
   vC: vCont;
-  i,cantAluV,cantAluG,max1,max2,: integer;
-  cumpleA,cumpleB,cumpleD: boolean;
-  maxT1; maxT2: str30;
-
 begin
-  max1 := -1; max2 := -1;
-  maxT1 := ''; maxT2 := '';
-  cargarVector(vT,vC); //cargo la tabla de precios de cada transporte.
+  cargarVector(vT,vC); //cargo la tabla de precios de cada transporte e inicializar el contador en 0.
   generarListaV(vL,vC); //genera, para cada alumno, una lista ordenada (por dia y por medio de transporte).
-  //todo lo que sigue puede ser: procesarLista().
-  cantAluV:= 0; cantAluG := 0;
-  for i := 1 to dimF_alu do begin
-    if i <= dimF_trans then
-      maxUso(vC[i],vT[i].tipo,max1,max2,maxT1,maxT2);
-    procesarAlu(vL[i],vT,cumpleA,cumpleB,cumpleD); //trabaja el vector de listas, de cantidades y de precios.
-    if
-    if (cumpleA) then
-      cantAluV := cantAluV +1;
-    if (cumpleB) then
-      cantAluG := cantAluG + 1;
-  end;
-
-  if cantAluV > 0 then
-    writeline(cantAlu,' alumnos realizan mas de 6 viajes por dia.');
-    
+  procesarLista(vL,vC,vT);
 end.
-
 
 
 
