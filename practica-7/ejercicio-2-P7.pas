@@ -98,9 +98,9 @@ procedure generarLista(var l: lClientes);
       readln(cod);
       write('Ingrese el dni del cliente: ');
       readln(dni);
-      write('Ingrese el apellido del cliente');
+      write('Ingrese el apellido del cliente: ');
       readln(ap);
-      write('Ingrese el nombre del cliente');
+      write('Ingrese el nombre del cliente: ');
       readln(nom);
       write('Ingrese codigo de la poliza contratada: ');
       readln(cPol);
@@ -117,11 +117,11 @@ procedure generarLista(var l: lClientes);
     nue^.dato := c;
     ant := l;
     act := l;
-    while (act <> nil) and (c.cod > act^.dato.cod) do begin
+    while (act <> nil) and (c.cod > act^.dato.cod) do begin //ordeno por codigo de cliente, ascendente
       ant := act;
       act := act^.sig;
     end;
-    if ant = act then
+    if (act = ant) then
       l := nue
     else
       ant^.sig := nue;
@@ -137,12 +137,85 @@ begin
   until (c.cod = condCorte);
 end;
 
+procedure procesarLista(l: lClientes; vP: vPol);
+
+  function cumpleB(dni: longint):boolean;
+  var
+    dig,cant: integer;
+  begin
+    cant := 0;
+    while dni <> 0 do begin
+      dig := dni mod 10;
+      if dig = 9 then 
+        cant := cant + 1;
+      dni := dni div 10;        
+    end;
+    cumpleB := (cant >= 2);
+  end;
+
+  function totalPoliza(base,adicional: real):real;
+  begin
+    totalPoliza := base + adicional;
+  end;
+
+var
+  aux: lClientes;
+  totP: real;
+begin
+  aux := l;
+  writeln();
+  writeln('Datos del Cliente:');
+  while aux <> nil do begin
+    totP := 0; //inicializo en 0 el contador de total dentro del while para que se reinicie por cada cliente.
+    totP :=  totalPoliza(aux^.dato.mBase,vP[aux^.dato.cPol].mExtra); //sumo el monto base de la poliza del cliente con el plus por tipo de poliza.
+    //informo por cliente.
+    writeln('---------------------------------------------------------');
+    writeln('DNI: ',aux^.dato.dni);
+    writeln('Apellido: ',aux^.dato.ap);
+    writeln('Nombre: ',aux^.dato.nom);
+    writeln('Monto total a abonar: $',totP:0:2);
+    //chequeo si el dni del cliente cumple la condicion B.
+    if (cumpleB(aux^.dato.dni)) then begin
+      writeln('---------------------------------------------------------');
+      writeln('El dni del cliente ',aux^.dato.ap,' ',aux^.dato.nom,' posee al menos dos digitos 9.'); 
+    end;
+    aux := aux^.sig;  
+  end;
+end;
+
+function eliminarCliente(l: lClientes; codigo: rango_cod): lClientes;
+var
+  ant, act: lClientes;
+begin
+  act := l;
+  ant := nil; // Inicializo ant a nil
+  while act^.dato.cod <> codigo do begin // Buscar el nodo a eliminar
+    ant := act;
+    act := act^.sig;
+  end;
+  if act = l then // Si el nodo a eliminar es el primer nodo
+    l := act^.sig
+  else
+    ant^.sig := act^.sig;
+  dispose(act); //elimino de memoria el registro del cliente con el codigo buscado.
+  eliminarCliente := l; //la funcion devuelve el puntero con la lista modificada.
+end;
+
 
 var
   pri: lClientes;
   vP: vPol;
+  codigo: rango_cod;
 begin
   pri := nil;
   cargarVector(vP); //se dispone.
   generarLista(pri);
+  procesarLista(pri,vP);
+  writeln('---------------------------------------------------------');
+  write('Ingrese el codigo del cliente a eliminar de la lista: ');
+  readln(codigo);
+  pri := eliminarCliente(pri,codigo);
+  writeln('---------------------------------------------------------');
+  writeln('El cliente fue eliminado con exito.');
+  writeln('---------------------------------------------------------');
 end.
