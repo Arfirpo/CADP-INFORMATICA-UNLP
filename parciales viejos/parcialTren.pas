@@ -28,8 +28,13 @@ type
     codCD: rango_cd;
   end;
 
+  tren = record
+      cod: integer;
+      cantViajes: integer;
+  end;
+
   nTrenes = record
-    dato: integer;
+    dato: tren;
     sig: lTrenes;
   end;
 
@@ -115,7 +120,7 @@ var
 begin
   aux := l;
   pri := nil;
-  while aux <> nil do begin
+  while (aux <> nil) do begin
     corte_tren := aux^.dato.codT;
     cantViajes := 0;
     totPas := 0;
@@ -127,7 +132,7 @@ begin
     end;
     agregarAdelante(pri,cantViajes);
     writeln('El promedio de pasajeros para el tren Nro. ',corte_tren,' fue de aproximadamente ',promPas(totPas,cantViajes):0:2,' pasajeros por viaje');
-  end;  
+  end;
   writeln('El mes con mayor monto recaudado fue: ',vM[maxrec(vM)].mes);
 end;
 
