@@ -224,8 +224,8 @@ var
   cod: integer;
   elim: boolean;
 begin
-  pri := nil;
   Randomize;
+  pri := nil;
   generarLista(pri);
   procesarLista(pri);
   cod := Random(100) + 1;
