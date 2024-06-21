@@ -2,14 +2,18 @@ program ejercicio5P4Pte2;
 
 const
   dimF_Clientes = 500;
+  dimF_dias = 31;
+  dimF_meses = 12;
+  dimF_ciudades = 2400;
+  dimF_max = 10;
 
 type
   rango_clientes = 1..dimF_Clientes;
-  dias = 1..31;
-  mes = 1..12;
+  dias = 1..dimF_dias;
+  meses = 1..dimF_meses;
   str30 = string[30];
   categoria = 'A'..'F';
-  ciudades = 1..2400;
+  ciudades = 1..dimF_ciudades;
 
   fecha = record
     dia: dias;
@@ -23,32 +27,42 @@ type
     codC: ciudades;
     montoC: real;
   end;
-  
+
   ciudad = record
-    cod: ciudades;
-    cantClientes: integer;
+    cod: integer;
+    valor: imteger;
   end;
 
   vClientes = array[rango_clientes] of cliente; //se dispone
   vCont = array[categoria] of integer;
   vCiudades = array[ciudades] of ciudad;
   vMeses = array[meses] of integer;
-  vMaximos = array[1..10] of integer;
 
 
 {modulos}
 
-procedure inicializarVector(var vC: vCont, var vM: vMeses; var vCiu: vCiudades);
+procedure inicializarVCatecogrias(var vC: vCont);
 var
   i: integer; 
 begin
-  for i := 1 to 2400 do begin
-    vCiu[i] := 0;
-    if i <= 12 then
-      vM[i] := 0;
-    if i <= 6 then
-      vC[i] := 0;
-  end;
+  for i := 'A' to 'F' do 
+    vC[i] := 0;
+end;
+
+procedure inicializarVciudades(var vCiu: vCiudades);
+var
+  i: integer;
+begin
+  for i := 1 to dimF_ciudades do
+    vCiu[i].valor := 0;
+end;
+
+procedure inicializarVmeses(var vM: vMeses);
+var
+  i: integer;
+begin
+  for i := 1 to dimF_meses do
+    vM[i] := 0;
 end;
 
 procedure leerFecha(var f: fecha);
@@ -103,7 +117,7 @@ var
 begin
   if (dimL < dimF_Clientes) then begin
     pos := determinarPosicion(c.fechaFC,dimL,vCli);
-    insertar(vCli,dimL,pos,c)
+    insertar(vCli,dimL,pos,c);
   end;
 end;
 
@@ -126,27 +140,27 @@ var
 begin
   for i := 1 to max do
     case i of
-      1: if (vC[i] >) 0 then
+      1: if (vC[i] > 0) then
           writeln('Hay ', vC[i],' clientes con categoria A de monotributo')
         else
           writeln('No hay clientes registrados en esa categoria de monotributo');
-      2: if (vC[i]) > 0 then
+      2: if (vC[i] > 0) then
           writeln('Hay ', vC[i],' clientes con categoria B de monotributo')
         else
           writeln('No hay clientes registrados en esa categoria de monotributo');
-      3: if (vC[i]) > 0 then
+      3: if (vC[i] > 0) then
           writeln('Hay ', vC[i],' clientes con categoria C de monotributo')
         else
           writeln('No hay clientes registrados en esa categoria de monotributo');
-      4: if (vC[i]) > 0 then
+      4: if (vC[i] > 0) then
           writeln('Hay ', vC[i],' clientes con categoria D de monotributo')
         else
           writeln('No hay clientes registrados en esa categoria de monotributo');
-      5: if (vC[i]) > 0 then
+      5: if (vC[i] > 0) then
           writeln('Hay ', vC[i],' clientes con categoria E de monotributo')
         else
           writeln('No hay clientes registrados en esa categoria de monotributo');
-      6: if (vC[i]) > 0 then
+      6: if (vC[i] > 0) then
           writeln('Hay ', vC[i],' clientes con categoria F de monotributo')
         else
           writeln('No hay clientes registrados en esa categoria de monotributo');
@@ -173,17 +187,54 @@ begin
   end;
 end;
 
+function promedio(prom: real; vCli: vClientes):real;
+var
+  i: integer;
+begin
+  for i := 1 to dimF_Clientes do
+    prom := prom + vCli[i].montoC;
+  promedio := prom / dimF_Clientes    
+end;
+
+procedure ordenarVector(var vCiu: vCiudades);
+var
+  i, j, p, item: integer;
+begin
+  for i := 1 to dimF_ciudades - 1 do
+  begin
+    p := i;
+    for j := i + 1 to dimF_ciudades do
+    begin
+      if vCiu[j].valor > vCiu[p].valor then
+        p := j;
+    end;
+    item := vCiu[p];
+    vCiu[p] := vCiu[i];
+    vCiu[i] := item;
+  end;
+end;
+
+procedure imprimir10Max(vCiu: vCiudades);
+var
+  i: integer;
+begin
+  for i := 1 to dimF_max do
+    writeln('La ',i,'° ciudad con mayor cantidad de clientes tiene el codigo: ',vCiu[i].cod);
+end;
+
 procedure procesarVector(vCli: vClientes; var vCiu: vCiudades; var vC: vCont; var vM: vMeses);
 var
   i: rango_clientes;
-  cantAnio,cantMes,max_Contratos,max_anio: integer;
+  cantAnio,cantMes,max_Contratos,max_anio,cantCli: integer;
   montoProm: real;
 begin
 {inicializar variables totales}
-  i := 1; 
+  i := 0; 
   montoProm := 0;
   max_Contratos := -1;
   max_anio := 0;
+  cantCli := 0;
+  montoProm := promedio(montoProm,vCli);
 
   while (i < dimF_Clientes) do begin
 
@@ -198,12 +249,15 @@ begin
         while (i < dimF_Clientes) and (vCli[i].fechaFC.anio = corte_anio) and (vCli[i].fechaFC.mes = corte_mes) do begin
 
           vC[vCli[i].catMono] = vC[vCli[i].catMono] + 1; {cuenta cantidad de clientes por categoria de monotributo}
-          cantMes := cantMes + 1;
-          vCiu[vCli[i].codC] := vCiu[vCli[i].codC] + 1;
-          montoProm := montoProm + vCli[i].montoC;
-          i := i +1;
+          cantMes := cantMes + 1; {cuento contratos dentro del mismo mes}
+          vCiu[vCli[i].codC].valor := vCiu[vCli[i].codC].valor + 1; {sumo clientes en el vector de ciudades, segun codigo de ciudad}
+          vCiu[vCli[i].codC].cod := vCli[i].codC; {guardo el codigo de ciudad en la parte correspondiente del vector de ciudades}
+          if (vCli[i].montoC > montoProm) then {comparo el monto mensual del contrato de un cliente con el promedio calculado anteriormente}
+            cantCli := cantCli + 1; {si el monto del contrato del cliente supera el promedio, sumo +1 en el contador de condicion}
 
+          i := i + 1; {incremento el indice para recorrer la siguiente posicion del vector}
         end;
+        
         cantAnio := cantAnio + cantMes;
         vM[corte_mes] := vM[corte_mes] + cantMes; {cuento cantidad de contratos en el mismo mes del año}
       end;
@@ -212,9 +266,9 @@ begin
   
   end;
 
-
-  montoProm := montoProm / dimF_Clientes; {obtengo monto de contrato mensual promedio}
-  writeln('La cantidad de clientes que superan mensualmente el monto promedio entre todos los clientes es: ',cantClientes(vCli,montoProm));
+  ordenarVector(vCiu); {ordeno de mayor a menor el vector}
+  imprimir10Max(vCiu); {imprimo los codigos de las 10 ciudades con mas clientes}
+  writeln('La cantidad de clientes que superan mensualmente el monto promedio entre todos los clientes es: ',cantCli);
   writeln('La mayor cantidad de contratos se firmo en el anio ',max_anio)
   cantPorCaT(vC);
 
@@ -223,9 +277,14 @@ end;
 
 {programa principal}
 var
-  vCli: vClientes; vC: vCont; vCiu: vCiudades; vM: vMeses;
+  vCli: vClientes; 
+  vC: vCont; 
+  vCiu: vCiudades; 
+  vM: vMeses;
 begin
-  inicializarVector(vC,vM,vCiu);
+  inicializarVCatecogrias(vC);
+  inicializarVmeses(vM);
+  inicializarVciudades(vCiu);
   cargarVector(vCli); //se dispone
   procesarVector(vCli,vCiu,vC,vM);
 end.
