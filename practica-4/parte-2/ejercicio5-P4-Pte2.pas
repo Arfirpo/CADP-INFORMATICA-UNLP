@@ -1,5 +1,8 @@
 program ejercicio5P4Pte2;
 
+uses
+  sysUtils;
+
 const
   dimF_Clientes = 500;
   dimF_dias = 31;
@@ -30,7 +33,7 @@ type
 
   ciudad = record
     cod: integer;
-    valor: imteger;
+    valor: integer;
   end;
 
   vClientes = array[rango_clientes] of cliente; //se dispone
@@ -43,7 +46,7 @@ type
 
 procedure inicializarVCatecogrias(var vC: vCont);
 var
-  i: integer; 
+  i: categoria; 
 begin
   for i := 'A' to 'F' do 
     vC[i] := 0;
@@ -65,15 +68,38 @@ begin
     vM[i] := 0;
 end;
 
+
+// procedure leerFecha(var f: fecha);
+// begin
+//   with f do begin
+//     write('Dia: ');
+//     readln(dia);
+//     write('Mes: ');
+//     readln(mes);
+//     write('Anio: ');
+//     readln(anio);
+//   end;
+// end;
+
+// procedure leerCliente(var c: cliente);
+// begin
+//   with c do begin
+//     leerFecha(c.fechaFC);
+//     write('Categoria Monotributo: ');
+//     readln(catMono);
+//     write('Codigo de ciudad: ');
+//     readln(codC);
+//     write('Monto del contrato: ');
+//     readln(montoC);
+//   end;
+// end;
+
 procedure leerFecha(var f: fecha);
 begin
   with f do begin
-    write('Dia: ');
-    readln(dia);
-    write('Mes: ');
-    readln(mes);
-    write('Anio: ');
-    readln(anio);
+    dia := Random(dimF_dias) + 1;
+    mes := Random(dimF_meses) + 1;
+    anio := Random(75) + 1950;
   end;
 end;
 
@@ -81,43 +107,42 @@ procedure leerCliente(var c: cliente);
 begin
   with c do begin
     leerFecha(c.fechaFC);
-    write('Categoria Monotributo: ');
-    readln(catMono);
-    write('Codigo de ciudad: ');
-    readln(codC);
-    write('Monto del contrato: ');
-    readln(montoC);
+    catMono := Chr(Ord('A') + Random(6));
+    codC := Random(dimF_ciudades) + 1;
+    montoC := Random(500) + 1;
   end;
 end;
 
+
+//se dispone-------------------------------------------------------------------------
 procedure insertarOrdenado(var vCli: vClientes; c: cliente; var dimL: integer);
   
   function determinarPosicion(f: fecha; dimL: integer; vCli: vClientes):integer;
   var
-    pos: integer;
+    ps: integer;
   begin
-    pos := 1;
-    while (pos <= dimL) and ((f.anio < vCli[pos].fechaFC.anio) or ((f.anio = vCli[pos].fechaFC.anio) and (f.mes < vCli[pos].fechaFC.mes)) or ((f.anio = vCli[pos].fechaFC.anio) and ((f.mes = vCli[pos].fechaFC.mes) and ((f.dia < vCli[pos].fechaFC.dia))))) do
-      pos: pos + 1;
-    determinarPosicion := pos;
+    ps:= 1;
+    while (ps <= dimL) and ((f.anio < vCli[ps].fechaFC.anio) or ((f.anio = vCli[ps].fechaFC.anio) and (f.mes < vCli[ps].fechaFC.mes)) or ((f.anio = vCli[ps].fechaFC.anio) and ((f.mes = vCli[ps].fechaFC.mes) and ((f.dia < vCli[ps].fechaFC.dia))))) do
+      ps:= ps+ 1;
+    determinarPosicion := ps;
   end;
 
-  procedure insertar(var vCli: vClientes; var dimL: integer; pos: integer; c: cliente);
+  procedure insertar(var vCli: vClientes; var dimL: integer; ps: integer; c: cliente);
   var
     j: integer;
   begin
-    for j := dimL downto pos do
+    for j := dimL downto ps do
       vCli[j+1] := vCli[j];
-    vCli[pos] := c;
+    vCli[ps] := c;
     dimL := dimL + 1;
   end;
 
 var
-  pos: integer;
+  ps: integer;
 begin
   if (dimL < dimF_Clientes) then begin
-    pos := determinarPosicion(c.fechaFC,dimL,vCli);
-    insertar(vCli,dimL,pos,c);
+    ps:= determinarPosicion(c.fechaFC,dimL,vCli);
+    insertar(vCli,dimL,ps,c);
   end;
 end;
 
@@ -133,34 +158,35 @@ begin
     insertarOrdenado(vCli,c,dimL);
   end;    
 end;
+//-----------------------------------------------------------------------------------
 
 procedure cantPorCaT(vC: vCont);
 var
-  i: integer;
+  i: categoria;
 begin
-  for i := 1 to max do
+  for i := 'A' to 'F' do
     case i of
-      1: if (vC[i] > 0) then
+      'A': if (vC[i] > 0) then
           writeln('Hay ', vC[i],' clientes con categoria A de monotributo')
         else
           writeln('No hay clientes registrados en esa categoria de monotributo');
-      2: if (vC[i] > 0) then
+      'B': if (vC[i] > 0) then
           writeln('Hay ', vC[i],' clientes con categoria B de monotributo')
         else
           writeln('No hay clientes registrados en esa categoria de monotributo');
-      3: if (vC[i] > 0) then
+      'C': if (vC[i] > 0) then
           writeln('Hay ', vC[i],' clientes con categoria C de monotributo')
         else
           writeln('No hay clientes registrados en esa categoria de monotributo');
-      4: if (vC[i] > 0) then
+      'D': if (vC[i] > 0) then
           writeln('Hay ', vC[i],' clientes con categoria D de monotributo')
         else
           writeln('No hay clientes registrados en esa categoria de monotributo');
-      5: if (vC[i] > 0) then
+      'E': if (vC[i] > 0) then
           writeln('Hay ', vC[i],' clientes con categoria E de monotributo')
         else
           writeln('No hay clientes registrados en esa categoria de monotributo');
-      6: if (vC[i] > 0) then
+      'F': if (vC[i] > 0) then
           writeln('Hay ', vC[i],' clientes con categoria F de monotributo')
         else
           writeln('No hay clientes registrados en esa categoria de monotributo');
@@ -171,6 +197,7 @@ function cantClientes(vCli: vClientes; prom: real):integer;
 var
   i,aux: integer;
 begin
+  aux := 0;
   for i := 1 to dimF_Clientes do begin
     if (vCli[i].montoC > prom) then
       aux := aux + 1;
@@ -198,7 +225,8 @@ end;
 
 procedure ordenarVector(var vCiu: vCiudades);
 var
-  i, j, p, item: integer;
+  i, j, p: integer;
+  item: ciudad;
 begin
   for i := 1 to dimF_ciudades - 1 do
   begin
@@ -219,13 +247,73 @@ var
   i: integer;
 begin
   for i := 1 to dimF_max do
-    writeln('La ',i,'° ciudad con mayor cantidad de clientes tiene el codigo: ',vCiu[i].cod);
+    writeln('La ',i,'° ciudad con mayor cantidad de clientes (',vCiu[i].valor,' contratos) tiene el codigo: ',vCiu[i].cod);
 end;
+
+procedure imprimirVectorMeses(vM: vMeses);
+var
+  i: meses;
+begin
+  for i := 1 to dimF_meses do begin
+    case i of
+      1: if vM[i] > 0 then
+        writeln('En el mes de Enero se firmaron: ',vM[i],' contratos.')
+      else
+        writeln('En el mes de Enero no se firmaron contratos.');
+      2: if vM[i] > 0 then
+        writeln('En el mes de Febrero se firmaron: ',vM[i],' contratos.')
+      else
+        writeln('En el mes de Febrero no se firmaron contratos.');
+      3: if vM[i] > 0 then
+        writeln('En el mes de Marzo se firmaron: ',vM[i],' contratos.')
+      else
+        writeln('En el mes de Marzo no se firmaron contratos.');
+      4: if vM[i] > 0 then
+        writeln('En el mes de Abril se firmaron: ',vM[i],' contratos.')
+      else
+        writeln('En el mes de Abril no se firmaron contratos.');
+      5: if vM[i] > 0 then
+        writeln('En el mes de Mayo se firmaron: ',vM[i],' contratos.')
+      else
+        writeln('En el mes de Mayo no se firmaron contratos.');
+      6: if vM[i] > 0 then
+        writeln('En el mes de Junio se firmaron: ',vM[i],' contratos.')
+      else
+        writeln('En el mes de Junio no se firmaron contratos.');
+      7: if vM[i] > 0 then
+        writeln('En el mes de Julio se firmaron: ',vM[i],' contratos.')
+      else
+        writeln('En el mes de Julio no se firmaron contratos.');
+      8: if vM[i] > 0 then
+        writeln('En el mes de Agosto se firmaron: ',vM[i],' contratos.')
+      else
+        writeln('En el mes de Agosto no se firmaron contratos.');
+      9: if vM[i] > 0 then
+        writeln('En el mes de Septiembre se firmaron: ',vM[i],' contratos.')
+      else
+        writeln('En el mes de Septiembre no se firmaron contratos.');
+      10: if vM[i] > 0 then
+        writeln('En el mes de Octubre se firmaron: ',vM[i],' contratos.')
+      else
+        writeln('En el mes de Octubre no se firmaron contratos.');
+      11: if vM[i] > 0 then
+        writeln('En el mes de Noviembre se firmaron: ',vM[i],' contratos.')
+      else
+        writeln('En el mes de Noviembre no se firmaron contratos.');
+      12: if vM[i] > 0 then
+        writeln('En el mes de Diciembre se firmaron: ',vM[i],' contratos.')
+      else
+        writeln('En el mes de Diciembre no se firmaron contratos.');
+    end;
+  end;
+end;
+
 
 procedure procesarVector(vCli: vClientes; var vCiu: vCiudades; var vC: vCont; var vM: vMeses);
 var
-  i: rango_clientes;
-  cantAnio,cantMes,max_Contratos,max_anio,cantCli: integer;
+  i: integer;
+  cantAnio,cantMes,max_Contratos,max_anio,cantCli,corte_anio: integer;
+  corte_mes: meses;
   montoProm: real;
 begin
 {inicializar variables totales}
@@ -248,7 +336,7 @@ begin
 
         while (i < dimF_Clientes) and (vCli[i].fechaFC.anio = corte_anio) and (vCli[i].fechaFC.mes = corte_mes) do begin
 
-          vC[vCli[i].catMono] = vC[vCli[i].catMono] + 1; {cuenta cantidad de clientes por categoria de monotributo}
+          vC[vCli[i].catMono] := vC[vCli[i].catMono] + 1; {cuenta cantidad de clientes por categoria de monotributo}
           cantMes := cantMes + 1; {cuento contratos dentro del mismo mes}
           vCiu[vCli[i].codC].valor := vCiu[vCli[i].codC].valor + 1; {sumo clientes en el vector de ciudades, segun codigo de ciudad}
           vCiu[vCli[i].codC].cod := vCli[i].codC; {guardo el codigo de ciudad en la parte correspondiente del vector de ciudades}
@@ -261,18 +349,21 @@ begin
         cantAnio := cantAnio + cantMes;
         vM[corte_mes] := vM[corte_mes] + cantMes; {cuento cantidad de contratos en el mismo mes del año}
       end;
-      writeln('En el anio, ',corte_anio,' se firmaron ',cantAnio,' contratos.');
+      writeln('En el anio ',corte_anio,' se firmaron ',cantAnio,' contratos.');
       maximo(corte_anio,cantAnio,max_anio,max_Contratos);
-  
   end;
 
+  writeln('----------------------------------------------------');
   ordenarVector(vCiu); {ordeno de mayor a menor el vector}
   imprimir10Max(vCiu); {imprimo los codigos de las 10 ciudades con mas clientes}
+  writeln('----------------------------------------------------');
   writeln('La cantidad de clientes que superan mensualmente el monto promedio entre todos los clientes es: ',cantCli);
-  writeln('La mayor cantidad de contratos se firmo en el anio ',max_anio)
+  writeln('----------------------------------------------------');
+  writeln('La mayor cantidad de contratos se firmo en el anio ',max_anio);
+  writeln('----------------------------------------------------');
   cantPorCaT(vC);
-
-
+  writeln('----------------------------------------------------');
+  imprimirVectorMeses(vM);
 end;
 
 {programa principal}
@@ -282,6 +373,7 @@ var
   vCiu: vCiudades; 
   vM: vMeses;
 begin
+  Randomize;
   inicializarVCatecogrias(vC);
   inicializarVmeses(vM);
   inicializarVciudades(vCiu);
