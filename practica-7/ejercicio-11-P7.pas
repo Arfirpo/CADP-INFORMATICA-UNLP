@@ -1,42 +1,42 @@
-program ejercicio11P7;
+program ejercicio12P7;
 
 uses
   sysUtils;
 
 const
-  dimF_eventos = 100;
-  dimF_tipos = 5;
+  dimF_tSusc = 4;
 
 type
   str30 = string[30];
-  rango_e = 1..dimF_eventos;
-  rango_t = 1..dimF_tipos;
+  rango_tSusc = 1..dimF_tSusc;
+  vSuscripciones = array[rango_tSusc] of integer;
+  vTipos = array[rango_tSusc] of real;
 
-  evento = record
-    nomE: str30;
-    tipoE: rango_t;
-    lugarE: str30;
-    maxCant: integer;
-    valor_entrada: real;
+  cliente = record
+    nom: str30;
+    dni: longint;
+    edad: integer;
+    tSuscripcion: rango_tSusc;
   end;
 
-  venta = record
-    codV: integer;
-    numE: rango_e;
-    dni_comprador: longint;
-    cantEntradas: integer;
+  lClientes = ^nClientes;
+
+  nClientes = record
+    dato: cliente;
+    sig: lClientes;
   end;
 
-  vEventos = array[rango_e] of evento;
-
-  lVentas = ^nVentas;
-
-  nVentas = record
-    dato: venta;
-    sig: lVentas;
+  mas40 = record
+    nom: str30;
+    dni: longint;
   end;
 
-  vRecaudacion = array[rango_e] of real;
+  lMas40 = ^nMas40;
+
+  nMas40 = record
+    dato: mas40;
+    sig: lMas40;
+  end;
 
 {modulos}
 
@@ -53,166 +53,161 @@ begin
   palabra := Result;
 end;
 
-procedure inicializarVRec(var v: vRecaudacion);
+procedure cargarVector(var vT: vTipos);
+begin
+  vT[1] := 15;
+  vT[2] := 20.5;
+  vT[3] := 33.15;
+  vT[4] := 40;
+end;
+
+procedure inicializarVector(var vS: vSuscripciones);
 var
-  i: rango_e;
+  i: rango_tSusc;
 begin
-  for i := 1 to dimF_eventos do
-    v[i] := 0;
+  for i := 1 to dimF_tSusc do
+    vS[i] := 0;
 end;
 
-procedure leerEvento(var e: evento);
+procedure leerCliente(var c: cliente);
 begin
-  with e do begin
-    randomString(5,nomE);
-    tipoE := Random(dimF_tipos) + 1;
-    randomString(5,lugarE);
-    maxCant := Random(100) + 1;
-    valor_entrada := Random(50) + 1;
-  end;
-end;
-
-procedure cargarVectorE(var v: vEventos);
-var
-  i: rango_e;
-  e: evento;
-begin
-  for i := 1 to dimF_eventos do begin
-    leerEvento(e);
-    v[i] := e;
-  end;
-end;
-
-procedure leerVenta(var v: venta);
-begin
-  with v do begin
-    codV := Random(100) - 1;
-    if (codV <> -1) then begin
-      numE := Random(dimF_eventos) + 1;
-      dni_comprador := Random(39999999) + 1;
-      cantEntradas := Random(10) + 1;
+  with c do begin
+    dni := Random(1099);
+    if(dni <> 0) then begin
+      randomString(5,nom);
+      edad := Random(77) + 14;
+      tSuscripcion := Random(dimF_tSusc) + 1;
     end;
   end;
 end;
 
-procedure armarNodo(var l: lVentas; v: venta);
+function posicionValida(l: lClientes; dni: longint):boolean;
 var
-  nue: lVentas;
+  ok: boolean;
+begin
+  ok := true;
+  while (l <> nil) and (l^.dato.dni <> dni) do
+    l := l^.sig;
+  if (l <> nil) and (l^.dato.dni = dni) then
+    ok := false;
+  posicionValida := ok;
+end;
+
+procedure armarNodo(var l: lClientes; c: cliente);
+var
+  nue: lClientes;
 begin
   new(nue);
-  nue^.dato := v;
+  nue^.dato := c;
   nue^.sig := l;
   l := nue;
 end;
 
-procedure generarListaV(var l: lVentas);
+procedure generarLista(var l: lClientes);
 var
-  v: venta;
+  c: cliente;
 begin
-  leerVenta(v);
-  while (v.codV <> -1) do begin
-    armarNodo(l,v);
-    leerVenta(v);
+  leerCliente(c);
+  while(c.dni <> 0) do begin
+    if(posicionValida(l,c.dni)) then
+      armarNodo(l,c);
+    leerCliente(c);
   end;
 end;
 
-procedure minRec(vRec: vRecaudacion; var nMin1,nMin2,lMin1,lMin2: str30; vE: vEventos);
-var
-  i: rango_e;
-  min1,min2: real;
+function cumpleCondicion(edad: longint; tipoS: rango_tSusc):boolean;
 begin
-  min1 := 9999;
-  min2 := 9999;
-  for i := 1 to dimF_eventos do begin
-    if(vRec[i] < min1) then begin
-      min2 := min1;
-      nMin1 := nMin2;
-      lMin2 := lMin1;
-      min1 := vRec[i];
-      nMin1 := vE[i].nomE;
-      lMin1 := vE[i].lugarE;
+  cumpleCondicion := ((edad > 40) and ((tipoS = 3) or (tipoS = 4)));
+end;
+
+procedure insertarOrdenado(var l: lMas40; n: str30; d: longint);
+var
+  nue,ant,act: lMas40;
+begin
+  new(nue);
+  nue^.dato.nom := n;
+  nue^.dato.dni := d;
+  ant := l;
+  act := l;
+  while (act <> nil) and (d > act^.dato.dni) do begin
+    ant := act;
+    act := act^.sig;
+  end;
+  if(act = ant) then
+    l := nue
+  else
+    ant^.sig := nue;
+  nue^.sig := act;
+end;
+
+procedure maxSusc(vS: vSuscripciones; var maxS1,maxS2: integer);
+var
+  max1,max2: integer;
+  i: rango_tSusc;
+begin
+  max1 := -1; 
+  max2 := -1;
+  for i := 1 to dimF_tSusc do begin
+    if(vS[i] > max1) then begin
+      max2 := max1;
+      maxS2 := maxS1;
+      max1 := vS[i];
+      maxS1 := i;
     end
-    else if(vRec[i] < min2) then begin
-      min2 := vRec[i];
-      nMin2 := vE[i].nomE;
-      lMin2 := vE[i].lugarE;
+    else if(vS[i] > max2) then begin
+      max2 := vS[i];
+      maxS2 := i;
     end;
-  end;
+  end; 
 end;
 
-function procesarDig(dni: longint):boolean;
+procedure procesarLista(l: lClientes; var l2: lMas40; vT: vTipos; var vS: vSuscripciones);
 var
-  dig,digP,digI: integer;
+  ganTot: real;
+  maxS1,maxS2: integer;
 begin
-  digP := 0; digI := 0;
-  while (dni <> 0) do begin
-    dig := dni mod 10;
-    if (dig mod 2 = 0) then
-      digP := digP + 1
-    else
-      digI := digI + 1;
-    dni := dni div 10;
-  end;
-  procesarDig := (digP > digI);
-end;
-
-function condicionB(dni: longint; tipoE: rango_t):boolean;
-begin
-  condicionB := ((procesarDig(dni)) and (tipoE = 3));
-end;
-
-function condicionC(maxCant,cant: integer):boolean;
-begin
-  condicionC := (cant >= maxCant);
-end;
-
-procedure procesarListaV(l: lVentas; vE: vEventos; var vRec: vRecaudacion);
-var
-  nomMin1,nomMin2,lugMin1,lugMin2: str30;
-  cantE50,cumpleB: integer;
-begin
-  nomMin1 := '';
-  nomMin2 := '';
-  lugMin1 := '';
-  lugMin2 := '';
-  cantE50 := 0;
-  cumpleB := 0;
-  while(l <> nil) do begin
-
-    vRec[l^.dato.numE] := vRec[l^.dato.numE] + (l^.dato.cantEntradas * vE[l^.dato.numE].valor_entrada);
-    
-    if(condicionB(l^.dato.dni_comprador,vE[l^.dato.numE].tipoE)) then
-      cumpleB := cumpleB + l^.dato.cantEntradas;
-    
-    if(l^.dato.numE = 50) then
-      cantE50 := cantE50 + l^.dato.cantEntradas;
-
+  ganTot := 0;
+  maxS1 := 0; maxS2 := 0;
+  while (l <> nil) do begin
+    ganTot := ganTot + vT[l^.dato.tSuscripcion];
+    vS[l^.dato.tSuscripcion] := vS[l^.dato.tSuscripcion] + 1;
+    if(cumpleCondicion(l^.dato.edad,l^.dato.tSuscripcion)) then
+      insertarOrdenado(l2,l^.dato.nom,l^.dato.dni);    
     l := l^.sig;
   end;
+  writeln('La ganancia total de Fortacos es: $',ganTot:0:2);
+  maxSusc(vS,maxS1,maxS2);
+  writeln('La suscripcion con mas clientes es la: ',maxS1,'.');
+  writeln('La segunda suscripcion con mas clientes es la: ',maxS2,'.');
+end;
 
-  minRec(vRec,nomMin1,nomMin2,lugMin1,lugMin2,vE);
-  writeln('Nombre y Lugar de los dos eventos que han tenido menor recaudación.');
-  writeln('1.- Nombre del evento: ',nomMin1,' - Lugar del Evento: ',lugMin1,'.');
-  writeln('2.- Nombre del evento: ',nomMin2,' - Lugar del Evento: ',lugMin2,'.');
-
-  writeln('Cantidad de entradas vendidas cuyo comprador tiene un dni con mas digitos pares que digitos impares: ',cumpleB,'.');
-  if(condicionC(vE[50].maxCant,cantE50)) then
-    writeln('La cantidad de entradas vendidas para el evento ',vE[50].nomE,' alcanzo la cantidad maxima de personas permitidas.')
-  else
-    writeln('La cantidad de entradas vendidas para el evento ',vE[50].nomE,' no alcanzo la cantidad maxima de personas permitidas.');
-
+procedure imprimirLista(l: lMas40);
+begin
+writeln('Lista de clientes mayores de 40:');
+writeln('----------------------------------');
+  while (l <> nil) do begin
+    writeln(l^.dato.nom);
+    writeln(l^.dato.dni);
+    writeln('----------------------------------');
+    l := l^.sig;
+  end;
 end;
 
 {Programa Principal}
 var
-  vE: vEventos;
-  pri: lVentas;
-  vRec: vRecaudacion;
+  pri: lClientes;
+  pri2: lMas40;
+  vT: vTipos;
+  vS: vSuscripciones;
+
 begin
   Randomize;
-  pri:= nil;
-  cargarVectorE(vE); //se dispone.
-  inicializarVRec(vRec);
-  generarListaV(pri);
-  procesarListaV(pri,vE,vRec);
+  pri := nil;
+  pri2 := nil;
+  inicializarVector(vS);
+  cargarVector(vT); //se dispone
+  generarLista(pri);
+  procesarLista(pri,pri2,vT,vS);
+  //solo para corroborar
+  imprimirLista(pri2);
 end.
