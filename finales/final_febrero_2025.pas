@@ -109,3 +109,74 @@ begin
 	generarListaOrdenada(pri);
 	procesarLista(pri);	
 end.
+
+{=================================================================================}
+
+{
+	2)Indique VERDADERO o FALSO. Justifique en todos los casos:
+
+	A.La comunicación entre el programa principal y un modulo a traves de un parametro por valor evita que el programa principal pueda ver las modificacones realizadas por el modulo al manipular dicho parametro.
+
+	B.Un modulo procedimiento no puede contener la siguiente declaración:
+	===============
+	type
+		lista = ^nodo;
+		nodo = record
+			dato: string;
+			sig: lista;
+		end;
+	===============
+	C.El proceso de agregar al final un elemento en un vector requiere de 5 UT y el proceso de agrega un elemento al final en una lista usando la técnica de llevar un puntero al último nodo requiere 4 UT.
+
+	D.La memoria  requerida por el programa "ejercicio2" es exactamente 79 bytes.
+	
+	E.La memoria  requerida por el programa "ejercicio2"no supera los 1500 bytes.	
+}
+
+program ejercicio2;
+
+{
+	Tabla de valores:
+
+		Char			= 1 byte	
+		Integer		= 6 bytes
+		real			= 8 bytes
+		Boolean		= 1 bytes
+		String		= Longitud + 1 byte
+		Puntero		=  4 bytes
+}
+
+
+const
+	max1 = 15; 
+	max2 = 20;
+
+type
+	rango1 = 1..max1;
+	rango2 = 1..max2;
+	vector = array[1..20] of ^real;
+	estudiante = record
+		nombre: string[15];
+		apellido: string[15];
+		legajo: string[10];
+		notas: ^vector;
+	end;
+
+	var
+		e: estudiante;
+		i: rango1;
+		j: rango2;
+		nota: real;
+	begin
+		for i := 6 to max1 do begin
+			read(e.nombre);
+			read(e.apellido);
+			read(e.legajo);
+			new(E.notas);
+			for J := 1 to max2 do begin
+				read(nota);
+				new(e.notas^[i]);
+				e.notas^[i]^ := nota;
+			end;
+		end;
+	end;
