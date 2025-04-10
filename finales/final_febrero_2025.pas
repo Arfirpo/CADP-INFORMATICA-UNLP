@@ -180,3 +180,91 @@ type
 			end;
 		end;
 	end;
+
+{=================================================================================}
+
+{
+  3) Se requiere implementar un modulo que duplique todos los valores existentes en el vector almacenado en el campo dato del registro. Indique para ambas posibles soluciones (A y B) si realiza de forma correcta dicha duplicación. Justificar
+}
+
+program ejercicio_3
+
+
+type
+  numeros = array [1...1000] of ^integer;
+  vector = record
+    dato: numeros;
+    diml: 0..1000;
+  end;
+
+{procedimiento A}
+procedure duplicar(v: vector);
+var
+  i: integer;
+begin
+  for i: 1 to 1000 do
+    v.dato[i]^ := (v.dato[i]^ * 2);
+end;
+
+{procedimiento B}
+procedure duplicar(v: vector);
+var
+  i: integer;
+begin
+  i := 1;
+  while(i <= 1000) do begin
+    v.dato[i]^ := (v.dato[i]^ * 2);
+    i := i + 1;
+  end;
+end;
+
+{Respuesta: ✅ 1. No se usa diml
+🔴 Esto es crítico, porque diml indica cuántos elementos del vector están realmente ocupados y contienen punteros válidos.
+
+Ambos procedimientos recorren todas las 1000 posiciones, incluso si muchas de ellas no tienen nada asignado (nil), lo que puede provocar errores al intentar hacer v.dato[i]^.
+
+✅ 2. No se pasa el vector por referencia
+El parámetro v se pasa por valor, lo cual significa que se trabaja con una copia del registro.
+
+Aunque los punteros internos (^integer) apuntan a la misma dirección de memoria, el campo diml está en la copia, y cualquier cambio en él no se refleja en el original.
+
+En este caso particular, como solo se modifica el contenido al que apuntan los punteros (v.dato[i]^), no es un error grave pasar por valor, pero es una mala práctica si eventualmente se quisiera modificar otra parte del registro (como diml, o asignar nuevos punteros).
+
+}
+
+{=================================================================================}
+
+{
+  4) Dado el siguiente programa indique que imprime en cada sentencia del write. Justifique su respuesta.
+}
+
+Program cuatro;
+
+var c,d: integer;
+
+procedure calcular(var a: integer; b: integer; var c: integer); 
+  var
+  d: integer;
+  begin
+  d := (b mod 2) + c;
+  b := (d mod 10) + d;
+  if (a + b) > 25 then b := b + (a * 2)
+                  else c := (b + a) * 3;
+  c := (a - b) + c;
+  writeln('valor a: ',a,', valor b: ',b,', valor c: ',c,', valor d: ',d);
+  end;
+
+var a,b: integer;
+begin
+  a := 5;
+  b := 3;
+  c := 2;
+  d := 9;
+  calcular(b,c,a);
+  writeln('valor a: ',a,', valor b: ',b,', valor c: ',c,', valor d: ',d);
+End.
+
+{Respuesta:
+  En el proceso:  a := 3;  b := 10; c := 32; d := 9;
+  En el programa: a := 32; b := 3;  c := 2;  d := 9;
+}
