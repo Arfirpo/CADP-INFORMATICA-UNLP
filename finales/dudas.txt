@@ -1,0 +1,1 @@
+1) si en el enunciado se dispone un vector (en este caso de 1..1000, no se especifica si esta ordenado o no) y una lista ordenada (por el mismo dato que contiene el vector), se me pide una solucion eficiente en tiempo de ejecución. ¿Es valido si en el examen ordeno el vector por insercion u seleccion y luego recorro ambas estructuras una vez para trabajarlas?
