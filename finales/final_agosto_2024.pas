@@ -139,7 +139,7 @@ Comparativa
 {===================================================================}
 
 {
-2) teniendo en cuenta la siguiente declaración de tipos (type) y los siguientes procedimientos (A, B y C) indique para cada uno de los procesos si los sueldos de los empleados se duplican de manera correcta, el valor del campo dato en cada nodo de la lista "l" recibida como parametro. Justifique su respuesta (en caso de considerar algun procesp incorrecto, indicar todos sus errores).
+2) teniendo en cuenta la siguiente declaración de tipos (type) y los siguientes procedimientos (A, B y C) indique para cada uno de los procesos si los sueldos de los empleados se duplican de manera correcta, el valor del campo dato en cada nodo de la lista "l" recibida como parametro. Justifique su respuesta (en caso de considerar algun proceso incorrecto, indicar todos sus errores).
 }
 
 type
@@ -151,19 +151,30 @@ type
 
   procedure uno(l: lista);
   begin
-    while(l^.sig <> nil) then begin
+    while(l^.sig <> nil) then begin // debería ser (l <> nil)
       l^.dato := l^.dato * 2;
       l := l^.sig;
     end;
   end;
+
+{
+errores:
+1.- Error de sintaxis: el bucle while se acompaña de la sentencia "do", then se usa para los "if".
+2.- dentro del bucle while se evalua si el nodo siguiente esta vacio, en vez de preguntar si el nodo actual lo esta. Este error logra que si la lista tiene un unico elemento, directamente no se entre al bucle while y si tiene varios nodos, se saltee el ultimo. 
+}
 
   procedure dos(l: lista);
   begin
     while(l <> nil) then begin
       l^.dato := l^.dato * 2;
       l := l^.sig;
-    end;)
+    end;
   end;
+
+{
+errores:
+1.- Error de sintaxis: el bucle while se acompaña de la sentencia "do", then se usa para los "if".
+}
 
   procedure tres(var l: lista);
   begin
@@ -172,6 +183,13 @@ type
       l^.dato := l^.dato * 2;
     end;)
   end;
+
+{
+errores:
+1.- Error de sintaxis: el bucle while se acompaña de la sentencia "do", then se usa para los "if".
+2.- La lista se pasa por referencia. En este caso no corresponde ya que el procedimiento no busca agregar o eliminar ningun nodo. Seria mas seguro pasar la lista por valor y trabajar sobre la copia de la misma ya que igualmente de esta manera se puede modificar los elementos apuntados por los punteros. Por otro lado, al pasar por referencia y avanzar el puntero de la lista, al finalizar el mismo quedara apuntando a nil y se perdera la referencia al primer nodo.
+3.- Dentro del bucle while, se avanza el puntero de la lista antes de trabajar con el primer nodo, por lo que no se duplicara el primer elemento y ademas se intentara modificar un nodo inexistente en la ultima vuelta.
+}
 
   {===================================================================}
 
@@ -188,7 +206,7 @@ var a,c: integer
 procedure numero(a: integer; var b: integer; var c: integer);
 var a: integer;
 begin
-  b := 10 DIV 4 + a;
+  b := 18 DIV 4 + a;
   a := b + 3 * c;
   if((a + b) > 5) then b := b + a * 2
                   else b := b + a * 3;
@@ -199,7 +217,7 @@ end;
 { Programa Principal}
 
 var
-  a,d: integer;
+  a,b: integer;
 begin
   a := 4
   b := 3
@@ -207,3 +225,42 @@ begin
   numero(b,c,a);
   writeln('Valor a: ',a,', ',' Valor b: ',b,', ','Valor c: ',c,','.');
 end.
+
+{
+  Análisis del programa y del procedimiento `numero`.
+
+  Variables globales (programa principal):
+    a := 4
+    b := 3
+    c := 8
+
+  Llamada al procedimiento:
+    numero(b, c, a);
+    Esto implica:
+      - `a` (parámetro valor) ← b = 3
+      - `b` (parámetro por referencia) ← c (original) = 8
+      - `c` (parámetro por referencia) ← a (original) = 4
+
+  Dentro del procedimiento:
+    b := 18 DIV 4 + a = 4 + 3 = 7
+    a := b + 3 * c = 7 + 3 * 4 = 7 + 12 = 19
+    (a + b) = 19 + 7 = 26 > 5 → se cumple el "then"
+    b := b + a * 2 = 7 + 38 = 45
+    c := a + b + c = 19 + 45 + 4 = 68
+
+    Por lo tanto:
+      - a (local) = 19
+      - b (referencia a c original) = 45
+      - c (referencia a a original) = 68
+
+    Salida desde dentro del procedimiento:
+      Valor a: 19, Valor b: 45, Valor c: 68.
+
+  Luego de volver al programa principal:
+    a (referencia modificada desde el procedimiento) = 68
+    b (no fue pasado por referencia) = 3
+    c (referencia modificada desde el procedimiento) = 45
+
+  Salida final desde el programa principal:
+    Valor a: 68, Valor b: 3, Valor c: 45.
+}
