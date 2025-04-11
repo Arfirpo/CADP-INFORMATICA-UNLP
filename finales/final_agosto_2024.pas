@@ -264,3 +264,65 @@ end.
   Salida final desde el programa principal:
     Valor a: 68, Valor b: 3, Valor c: 45.
 }
+
+
+{===================================================================}
+
+{
+4) Indique verdadero o falso. Justifique en todos los casos.
+
+a) Si en un programa se encuentra la estructura de control IF siempre puede ser reemplazada por un CASE. V
+
+b) Agregar un elemento al final de la lista es menos eficiente en tiempo de ejecución que agregar un elemento en un arreglo. V
+
+c) La técnica de debugging puede aplicarse en cualquier instancia del desarrollo de un programa. V
+
+d) Si conozco la cantidad de elementos maxima que van a ser almacenados en una estructura siempre es mas eficiente que esa estructura sea un vector. F
+
+e) Para modificar los valores contenidos en una lista se puede utilizar un modulo que sea una función. V
+
+f) El tiempo de ejecución requerido por el programa "ejercicio4" es menor a 40 unidades de tiempo.
+
+g) La memoria estatica requerida por el programa "ejercicio4" no supera los 85 bytes.
+
+}
+
+//Mis respuestas: V - V - V - 
+
+
+{
+Esquema de valores
+char:     1 byte
+integer:  6 bytes
+real:     10 bytes
+boolean:  1 byte
+string:   longitud + 1
+puntero:  4 bytes
+}
+program ejercicio4;
+
+const dimF = 15;
+
+type
+  vector = array [5..dimF] of ^integer;
+  info = record
+    nombre: string[15];
+    prom: real;
+    datos: vector;
+  end;
+
+var
+  i,nota: integer; e: info;
+begin
+  read(e.nombre); read(e.prom);
+  i := 4; read(nota);
+  while ((i < 11) and (nota <> -1)) do
+  begin
+    i := i + 1;
+    new(e.datos[i]);
+    e.datos[i]^ := nota;
+    read(nota);
+  end;
+End.
+
+{====================================================================================}
