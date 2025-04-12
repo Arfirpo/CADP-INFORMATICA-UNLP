@@ -52,6 +52,13 @@ type
   end;
 
   procedure procesarLista(l: lAsistencia);
+
+
+    procedure actualizarMaximo(cant_presente: integer; var max_presente: integer; cod_act: rango_deptos; var max_cod);
+    begin
+      //seguir aca
+    end;
+
   var 
     fIni,fFin: Fecha;
     cant_presente,max_presente: Integer;
@@ -70,7 +77,7 @@ type
           cant_presente := cant_presente + 1;
         end;
       end;
-      actualizarMaximo(cant_presente,max_presente,cod_act,max_dept);
+      actualizarMaximo(cant_presente,max_presente,cod_act,max_cod);
     end;
   end;
 
