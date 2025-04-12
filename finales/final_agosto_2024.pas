@@ -281,14 +281,11 @@ d) Si conozco la cantidad de elementos maxima que van a ser almacenados en una e
 
 e) Para modificar los valores contenidos en una lista se puede utilizar un modulo que sea una función. V
 
-f) El tiempo de ejecución requerido por el programa "ejercicio4" es menor a 40 unidades de tiempo.
+f) El tiempo de ejecución requerido por el programa "ejercicio4" es menor a 40 unidades de tiempo. F
 
-g) La memoria estatica requerida por el programa "ejercicio4" no supera los 85 bytes.
+g) La memoria estatica requerida por el programa "ejercicio4" no supera los 85 bytes. v
 
 }
-
-//Mis respuestas: V - V - V - 
-
 
 {
 Esquema de valores
@@ -312,17 +309,48 @@ type
   end;
 
 var
-  i,nota: integer; e: info;
+  i,nota: integer; e: info;               
 begin
-  read(e.nombre); read(e.prom);
-  i := 4; read(nota);
-  while ((i < 11) and (nota <> -1)) do
+  read(e.nombre); read(e.prom);            
+  i := 4; read(nota);                      
+  while ((i < 11) and (nota <> -1)) do      
   begin
     i := i + 1;
     new(e.datos[i]);
     e.datos[i]^ := nota;
     read(nota);
   end;
-End.
+End.                                        
+
+
+{
+4) Indique verdadero o falso. Justifique en todos los casos.
+
+a) Falso. El IF evalúa condiciones booleanas arbitrarias, mientras que el CASE solo sirve para decisiones múltiples basadas en una expresión ordinal (como un número entero o un carácter). No cualquier IF puede transformarse en un CASE.
+
+b) Verdadero. En listas, agregar al final requiere recorrer toda la lista (tiempo lineal), mientras que en arreglos, si se conoce el índice final, puede agregarse directamente (tiempo constante).
+
+c) Verdadero. El debugging puede aplicarse en cualquier etapa del desarrollo para detectar y corregir errores, aunque es más común durante la prueba y mantenimiento.
+
+d) Verdadero. Si se conoce la cantidad máxima de elementos, el uso de vectores es más eficiente en acceso y almacenamiento, ya que permiten acceso directo a los elementos.
+
+e) Falso. Para modificar valores de una lista es necesario usar un procedimiento, no una función, ya que las funciones en Pascal no permiten modificar parámetros por referencia a menos que se declaren explícitamente con `var`. Además, una función no está pensada para modificar estructuras, sino para devolver un valor.
+
+f) Falso. Analizando el programa "ejercicio4" y aplicando la fórmula del `while`:
+   - El `while` se ejecuta 7 veces como máximo (i va de 4 a 10).
+   - Condición del `while`: 3 operaciones (i < 11, nota <> -1, and).
+   - Cuerpo del `while`: 3 operaciones (i := i + 1; new; asignación).
+   - Fórmula: (7 + 1) * 3 + 7 * 3 = 24 + 21 = 45 operaciones elementales.
+   → Supera las 40 unidades de tiempo.
+
+g) Verdadero. La memoria estática ocupa:
+   - `i`, `nota`: 2 * 6 = 12 bytes
+   - `e`:
+     - `nombre`: string[15] → 16 bytes
+     - `prom`: real → 10 bytes
+     - `datos`: vector de [5..15] → 11 punteros * 4 bytes = 44 bytes
+   Total: 12 + 16 + 10 + 44 = 82 bytes (menor a 85 bytes).
+}
+
 
 {====================================================================================}
