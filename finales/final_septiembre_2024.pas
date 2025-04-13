@@ -275,40 +275,38 @@ case a of
 end;
 
 // b) Un arreglo de enteros con dimensión lógica igual a 250, es más eficiente en cuanto a memoria que una lista
-// con 250 nodos que almacenan un entero.
+// con 250 nodos que almacenan un entero. F
 
-// c) Un módulo procedimiento no puede contener la declaración de tipos de datos (type).
+// c) Un módulo procedimiento no puede contener la declaración de tipos de datos (type). F
 
-// d) Un módulo función puede retornar los siguientes tipos de datos: integer, boolean, char, puntero, string, real.
+// d) Un módulo función puede retornar los siguientes tipos de datos: integer, boolean, char, puntero, string, real. F
 
-// e) El tiempo de ejecución requerido por el programa “ejercicio4” no supera las 42 unidades de tiempo.
+// e) El tiempo de ejecución requerido por el programa “ejercicio4” no supera las 42 unidades de tiempo. v (me da 36 UT)
 
-// f) La memoria estática requerida por el programa “ejercicio4” no supera los 85 bytes.
+// f) La memoria estática requerida por el programa “ejercicio4” no supera los 85 bytes. V (me da 83 bytes) 
 
 
 program ejercicio4;
 const
-  aux = 10;
+  aux = 10;                                                         // 6 bytes
 type
   info = record
-    nombre: string[15];
-    legajo: string[10];
-    nota: ^integer;
-  end;
+    nombre: string[15];                                             // 16 bytes
+    legajo: string[10];                                             // 11 bytes
+    nota: ^integer;                                                 // 4 bytes
+  end;                                                              // Total: 31 byes
 
-  vector = array [5..15] of ^info;
+  vector = array [5..15] of ^info;                                  // 44 bytes
 
 var
-  v: vector;
-  i: integer;
-  e: info;
+  v: vector;                                                        // 44 bytes
+  i: integer;                                                       // 6 bytes
+  e: info;                                                          // 31 bytes
 
 begin
   write('Nombre: ');
   readln(e.nombre);
-  i := 0;
-
-  while (i < 5) and (e.nombre <> 'ZZZ') do begin
+  i := 0;                                                        
     write('Legajo: ');
     readln(e.legajo);
     new(v[i + 5]);
@@ -320,5 +318,62 @@ begin
     write('Nombre: ');
     readln(e.nombre);
   end;
-end.
+end.             
+
+{ 
+  4 - Indique Verdadero o Falso. Justifique en todos los casos:
+}
+
+{
+a) FALSO
+El segmento B (con CASE) es más eficiente que el segmento A (con IFs),
+ya que el CASE realiza una búsqueda directa basada en el valor de 'a',
+mientras que los IFs pueden evaluarse todos secuencialmente.
+Además, CASE está optimizado para valores discretos y subrangos como 0..20.
+}
+
+{
+b) VERDADERO
+Un arreglo de enteros de dimensión lógica 250 ocupa menos memoria que una lista
+de 250 nodos, ya que cada nodo en una lista incluye un puntero adicional.
+Cálculo:
+  - Arreglo: 250 * 6 bytes = 1500 bytes
+  - Lista: 250 * (6 + 4) = 2500 bytes
+}
+
+{
+c) FALSO
+En Pascal, un módulo (procedimiento o función) PUEDE declarar tipos
+de datos dentro de sí mismo mediante 'type'.
+El alcance de ese tipo será local al módulo.
+}
+
+{
+d) VERDADERO
+Una función puede retornar tipos como integer, boolean, char, puntero, string y real.
+Pascal permite usar tipos predefinidos o definidos por el usuario como tipo de retorno.
+}
+
+{
+e) VERDADERO
+El programa "ejercicio4" ejecuta como máximo 5 veces el ciclo while,
+con operaciones simples por iteración.
+Estimar 6-7 unidades por iteración → 5 * 7 = 35
+Más algunas fuera del ciclo: < 42 unidades de tiempo.
+}
+
+{
+f) FALSO
+Memoria estática requerida:
+  - vector: 11 punteros = 11 * 4 = 44 bytes
+  - e (registro info):
+      - nombre: string[15] = 16 bytes
+      - legajo: string[10] = 11 bytes
+      - nota (puntero): 4 bytes
+      → total e = 31 bytes
+  - i y aux: 2 * 6 = 12 bytes
+TOTAL = 44 + 31 + 12 = 87 bytes > 85
+Por lo tanto, es falso.
+}
+
 
