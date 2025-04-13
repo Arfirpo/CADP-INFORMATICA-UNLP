@@ -288,32 +288,32 @@ end;
 
 program ejercicio4;
 const
-  aux = 10;                                                         // 6 bytes
+  aux = 10;                                                         
 type
   info = record
-    nombre: string[15];                                             // 16 bytes
-    legajo: string[10];                                             // 11 bytes
-    nota: ^integer;                                                 // 4 bytes
-  end;                                                              // Total: 31 byes
+    nombre: string[15];                                             
+    legajo: string[10];                                             
+    nota: ^integer;                                                 
+  end;                                                              
 
-  vector = array [5..15] of ^info;                                  // 44 bytes
+  vector = array [5..15] of ^info;                                  
 
 var
-  v: vector;                                                        // 44 bytes
-  i: integer;                                                       // 6 bytes
-  e: info;                                                          // 31 bytes
+  v: vector;                                                         
+  i: integer;                                                           
+  e: info;                                                           
 
 begin
   write('Nombre: ');
   readln(e.nombre);
   i := 0;                                                        
-    write('Legajo: ');
-    readln(e.legajo);
+  write('Legajo: ');
+  readln(e.legajo);
+  while (i < 5) and (e.nombre <> 'ZZZ') do begin
     new(v[i + 5]);
     new(e.nota);
     e.nota^ := aux;
-    if (i < 10) then
-      v[i + 5]^ := e;
+    if (i < 10) then v[i + 5]^ := e;
     i := i + 1;
     write('Nombre: ');
     readln(e.nombre);
@@ -326,43 +326,35 @@ Ejercicio 4 - Verdadero o Falso
 a) Falso. El código con `case` es más eficiente que el uso de múltiples `if`, 
     ya que el compilador puede optimizarlo mediante tablas de saltos si los valores son contiguos.
 
-b) Falso. Si el enunciado menciona solo la dimensión lógica (250), 
-    se sobreentiende que la dimensión física es mayor. 
-    Entonces, el vector ocupa más memoria que una lista que solo reserva memoria por nodo efectivamente usado.
+b) Falso. Si el enunciado menciona solo la dimensión lógica (250), se sobreentiende que la dimensión física es mayor. Entonces, el vector ocupa más memoria que una lista que solo reserva memoria por nodo efectivamente usado.
 
 c) Falso. Un módulo procedimiento sí puede contener la declaración de tipos (`type`).
 
 d) Verdadero. Un módulo función puede devolver los tipos de datos indicados: 
     integer, boolean, char, puntero, string, real.
 
-e) Verdadero. El programa realiza un máximo de 42 operaciones aritmético-lógicas y asignaciones.
+e) Falso. El programa realiza un máximo de 54 operaciones aritmético-lógicas y asignaciones.
     Cálculo:
     - i := 0 → 1
-    - Dentro del while (máx. 5 veces):
+    - Dentro del while (C(N+1) + N(cuerpo del while)): 3(5 + 1) + 5(7) = 18 + 35 = 53
+        - Condiciones → 3 por iteración = 3 x 6 = 18
+        *Cuerpo del while*
+        - new(v[i + 5]) → 1
         - e.nota := aux → 1
         - if (i < 10) → 1
-        - v[i+1]^ := e → 1
+        - v[i+1]^ := e → 2
         - i := i + 1 → 2
-      Total por iteración: 5 × 5 = 25
-    - Total general: 1 (inicio) + 25 = 26
-    Pero hay otro `i := i + 1` luego del `if`, que también se ejecuta 5 veces, así que:
-    - Total por iteración real: 5 × (e.nota := aux + if + v[i+1]^ := e + i := i + 1) = 20
-    → ya estaba contado
-    - No hay más operaciones fuera del while
-    → Total: **21** operaciones (muy por debajo de 42)
-    → **Verdadero**
+      Total por iteración: 5 × 7 = 35
+    - Total general: 1 (inicio) + 53 (while) = 54
 
-f) Falso. La memoria estática requerida por el programa “ejercicio4” es de 89 bytes.
+f) Veradadero. La memoria estática requerida por el programa “ejercicio4” es de 81 bytes.
     Cálculo:
     - v: vector[5..15] de punteros → 11 punteros × 4 bytes = 44 bytes
-    - i, aux: integer → 2 × 6 bytes = 12 bytes
+    - i: integer → 6 bytes
     - e: registro info
         - nombre: string[15] → 15 + 1 = 16 bytes
         - legajo: string[10] → 10 + 1 = 11 bytes
-        - nota: integer → 6 bytes
-        - Total de e = 16 + 11 + 6 = 33 bytes
-    - Total estático: 44 + 12 + 33 = **89 bytes**
+        - nota: puntero → 4 bytes
+        - Total de e = 16 + 11 + 4 = 31 bytes
+    - Total estático: 44 + 6 + 31 = **81 bytes**
 }
-
-
-
