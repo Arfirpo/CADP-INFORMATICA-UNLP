@@ -12,7 +12,7 @@ type
   Fecha = record
     dia: 1..31;
     mes: 1..12;
-    anio: 1925..2025;
+    anio: 2024..2025;
   end;
 
   empleado = record
@@ -34,6 +34,13 @@ type
     sig: lAsistencia;
   end;
 
+  lDnis = ^nDnis;
+
+  nDnis = record
+    dato: integer;
+    sig: lDnis;
+  end;
+
 {modulos}
 
   procedure leerFecha(var f: Fecha);
@@ -51,39 +58,69 @@ type
     // se dispone
   end;
 
-  procedure procesarLista(l: lAsistencia);
+  function fechaValida(f, fIni, fFin: Fecha): boolean;
+  begin
+    fechaValida := ((f.anio > fIni.anio) or (f.anio = fIni.anio) and (f.mes > fIni.mes) or (f.mes = fIni.mes) and (f.dia >= fIni.dia)) and
+                  ((f.anio < fFin.anio) or (f.anio = fFin.anio) and (f.mes < fFin.mes) or (f.mes = fFin.mes) and (f.dia <= fFin.dia));
+  end;
 
+  procedure procesarLista(l: lAsistencia);
 
     procedure actualizarMaximo(cant_presente: integer; var max_presente: integer; cod_act: rango_deptos; var max_cod);
     begin
-      //seguir aca
+      if(cant_presente > max_presente) then begin
+        max_presente := cant_presente;
+        max_cod := cod_act;
+      end;
+    end;
+
+    procedure agregarListaDnis(var l: lDnis; dni: integer);
+    var aux: lDnis;
+    begin
+      aux := l;
+      while (aux <> nil) and (aux^.dato <> dni ) do begin
+        aux := aux^.sig;
+      end;
+      if aux = nil then begin
+        new(aux);
+        aux^.dato := dni;
+        aux^.sig := l;
+        l := aux;
+      end;
     end;
 
   var 
     fIni,fFin: Fecha;
+    pri: lDnis;
     cant_presente,max_presente: Integer;
     cod_act: rango_deptos;
     max_cod: integer;
   begin
     Writeln('Ingrese fecha de inicio (Periodo de asistencias): '); leerFecha(fIni);
-    Writeln('Ingrese fecha de final (Periodo de asistencias): ');
-    leerFecha(fFin);
-    max_cod := -1;
+    Writeln('Ingrese fecha de final (Periodo de asistencias): ');  leerFecha(fFin);
+    max_presente := -1;
+
     while(l <> Nil) do begin
-      cod_act: l^.dato.emp.cod_Depto;
+      pri := nil;
+      cod_act := l^.dato.emp.cod_Depto;
       cant_presente := 0;
+
       while(l <> nil) and (l^.dato.emp.cod_Depto = cod_act) do begin
-        if((((l^.dato.fecha.anio >= fIni.anio) and (l^.dato.fecha.anio <= fFin.anio)) and ((l^.dato.fecha.mes >= fIni.mes) and (l^.dato.fecha.mes <= fFin.mes)) and ((l^.dato.fecha.dia >= fIni.dia) and (l^.dato.fecha.dia <= fFin.dia))) and (l^.dato.presente)) then begin
-          cant_presente := cant_presente + 1;
+        if(fechaValida(l^.dato.fecha, fIni, fFin) and l^.dato.presente) then begin
+          agregarListaDnis(pri,l^.dato.emp.dni);
+          l := l^.sig;
         end;
       end;
+
+      while (pri <> nil) do begin
+        cant_presente := cant_presente + 1;
+        pri := pri^.sig;
+      end;
+
       actualizarMaximo(cant_presente,max_presente,cod_act,max_cod);
     end;
+    Writeln('El departamento con codigo ',max_cod,' fue el que mas empleados presentes tuvo durante el periodo ',fIni,' - ',fFin,'.');
   end;
-
-
-
-
 
 {programa principal}
 var
@@ -93,3 +130,195 @@ begin
   generarLista(pri);
   procesarLista(pri);
 End.
+
+{=============================================================================================}
+
+{
+2) suponga que se quiere implementar un modulo que retorne verdadero o falso si un valor entero existe o no en un vector. Indique para cada una de estas opciones (A y B) si realiza de forma correcta y/o eficiente la busqueda de un valor entero en un vector. Justificar.
+}
+
+type
+  vector =  array[1..1000] of integer;
+
+  type
+  vector = array[1..1000] of integer;
+
+{-----------------------------------------
+  Procedimiento A - Incorrecto
+------------------------------------------}
+  procedure busqueda(v: vector; dimL: integer; valor: integer; var ok: boolean);
+  var i: integer;
+  begin
+    i := 1;
+    for i := 1 to dimL do
+      if (valor = v[i]) then ok := true
+                        else ok := false;
+  end;
+
+  {✘ Error lógico:
+    - El valor de 'ok' se pisa en cada iteración.
+    - Si encuentra el valor en alguna posición pero luego no lo encuentra, 'ok' vuelve a ser false.
+    - No corta la búsqueda al encontrar el valor.
+  }
+
+  {⏱ Tiempo de ejecución: 5n + 4}
+  {  (for = 3n + 3, cuerpo = 2n, inicialización = 1)}
+
+{-----------------------------------------
+  Procedimiento B - Correcto pero menos eficiente
+------------------------------------------}
+  procedure busqueda(v: vector; dimL: integer; valor: integer; var ok: boolean);
+  var i: integer;
+  begin
+    i := 1; ok := false;
+    while i < dimL and not(ok) do begin
+      if (valor = v[i]) then ok := true;
+      i := i + 1;
+    end;
+  end;
+
+  {✔ Correcto:
+    - Busca correctamente el valor.
+    - Corta la búsqueda cuando lo encuentra.
+    - Pero tiene un leve error en la condición del while: debería ser 'i <= dimL' para no saltear el último elemento.
+  }
+
+  {⏱ Tiempo de ejecución: 7n + 5}
+  {  (evaluación while: 3(n+1), cuerpo: 4n, inicialización: 2)}
+
+{-----------------------------------------
+  Función sugerida - Correcta y eficiente
+------------------------------------------}
+function busqueda(v: vector; dimL: integer; valor: integer): boolean;
+var
+  pos: integer;
+begin
+  pos := 1;
+  while (pos <= dimL) and (v[pos] <> valor) do
+    pos := pos + 1;
+  busqueda := pos <= dimL;
+end;
+
+{✔ Ventajas:
+  - Correcta y clara: devuelve true si encuentra el valor, false en caso contrario.
+  - Corta la búsqueda al encontrar coincidencia.
+  - No necesita variable externa ('ok').
+  - Más eficiente que el procedimiento B.
+}
+
+{⏱ Tiempo de ejecución: 5n + 6}
+{  (while: 3(n+1), cuerpo: 2n, inicialización y asignación final: 3)}
+
+{============================================================================================}
+
+{
+3) Dado el siguiente programa indique que imprime en cada sentencia write. Justifique su respuesta.
+}
+program tres;
+var
+  c, d: integer;
+
+  procedure numero(var a: integer; var b: integer; var c: integer);
+  var
+    a: integer;
+  begin
+    a := (b DIV 3) + c;     // (8 DIV 3) + 4 = 6
+    b := (18 DIV a) + d;    // (18 DIV 6) + 5 = 8
+    if ((a + b) > 5) then   // (6 + 8) > 5 ? = TRUE
+      b := b + (a * 2)      // 8 + (6 * 2) = 20
+    else
+      b := (b + a) * 3;
+    c := a + b + c;         // 6 + 20 + 4 = 30
+    writeln('Valor a: ', a, ', Valor b: ', b, ', Valor c: ', c);
+  end;
+
+var
+  a, b: integer;
+begin
+  a := 4;
+  b := 3;
+  c := 8;
+  d := 5;
+  numero(b, c, a);
+  writeln('Valor a: ', a, ', Valor b: ', b, ', Valor c: ', c);
+end.
+
+{
+procedimiento: 
+1 - a := 3 | b := 8 | c:= 4
+2 - a := 6
+3 - b := 8
+4 - b := 20
+5 - c := 30
+
+Respuestas:
+  en el Procedimiento: a := 6 | b := 20 | c := 30 |
+  en el Programa: a := 30 | b := 3 | c := 20 |
+}
+
+{============================================================================================}
+
+// 4.- Indique Verdadero o Falso. Justifique en todos los casos:
+
+// a) Suponga que en un programa se encuentran los siguientes segmentos de código.
+// Entonces, el segmento de código A es más eficiente en tiempo de ejecución que el código B.
+// Considere que a es de un tipo subrango que puede tomar valores entre 0..20.
+
+// A
+if (a >= 0) and (a <= 10) then accion1;
+if (a > 10) and (a <= 20) then accion2;
+
+// B
+case a of
+  0..10: accion1;
+  11..20: accion2;
+end;
+
+// b) Un arreglo de enteros con dimensión lógica igual a 250, es más eficiente en cuanto a memoria que una lista
+// con 250 nodos que almacenan un entero.
+
+// c) Un módulo procedimiento no puede contener la declaración de tipos de datos (type).
+
+// d) Un módulo función puede retornar los siguientes tipos de datos: integer, boolean, char, puntero, string, real.
+
+// e) El tiempo de ejecución requerido por el programa “ejercicio4” no supera las 42 unidades de tiempo.
+
+// f) La memoria estática requerida por el programa “ejercicio4” no supera los 85 bytes.
+
+
+program ejercicio4;
+const
+  aux = 10;
+type
+  info = record
+    nombre: string[15];
+    legajo: string[10];
+    nota: ^integer;
+  end;
+
+  vector = array [5..15] of ^info;
+
+var
+  v: vector;
+  i: integer;
+  e: info;
+
+begin
+  write('Nombre: ');
+  readln(e.nombre);
+  i := 0;
+
+  while (i < 5) and (e.nombre <> 'ZZZ') do begin
+    write('Legajo: ');
+    readln(e.legajo);
+    new(v[i + 5]);
+    new(e.nota);
+    e.nota^ := aux;
+    if (i < 10) then
+      v[i + 5]^ := e;
+    i := i + 1;
+    write('Nombre: ');
+    readln(e.nombre);
+  end;
+end.
+
