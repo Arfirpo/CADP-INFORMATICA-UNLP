@@ -90,6 +90,7 @@
   // Operaciones e invocaciones a módulos para cargar y recorrer el vector d
   End.
 
+{Respuesta:  ambos programas son validos. A nivel funcional son equivalentes, ya que ambos declaran una variable que es un array de enteros pero el programa uno al tener un tipo de dato creado por el usuario, permitela reutilización del tipo, mientras que en el programa dos debera declararse el array de enteros cada vez que quiera usarse una variable de tal tipo}
 
 {=======================================================================================================}
 
