@@ -213,53 +213,29 @@
     d. Verdadero
     e. Falso
 
-    Justificaciones detalladas:
+  Justificaciones detalladas:
 
-    a. Falso    
-      Justificación: La modularización (uso de procedimientos y funciones) no necesariamente hace que un 
-      programa sea más eficiente en términos de tiempo de ejecución. De hecho, las llamadas a procedimientos 
-      y funciones añaden una ligera sobrecarga debido al tiempo necesario para pasar parámetros, guardar y 
-      restaurar el estado, y crear variables locales. La principal ventaja de usar módulos es mejorar la 
-      legibilidad, reutilización del código y facilitar el mantenimiento. En algunos casos, un programa 
-      monolítico podría ser ligeramente más rápido, aunque menos mantenible.
+  a. FALSO.
+    No todos los tipos simples permiten declarar subrangos. Solo los tipos ordinales (como integer, char, boolean o tipos enumerados) permiten subrangos.
+    No se pueden declarar subrangos de tipos como real o string.
 
-    b. Verdadero  
-      Justificación: El programa funciona correctamente. La función auxiliar(a) calcula el cuadrado de a (16²=256)
-      y devuelve este valor. Luego, se llama a calculo(256,b) donde el primer parámetro se pasa por valor (puede 
-      ser una expresión) y el segundo por referencia. Dentro de calculo, se modifica b = 6 + 256 DIV 4 = 6 + 64 = 70.
-      Al finalizar el programa, a=16 y b=70.
+  b. FALSO.
+    Incluir módulos mejora la estructura y legibilidad del programa, pero no lo hace necesariamente más eficiente en cuanto a tiempo o uso de memoria.
+    Dos programas que realizan la misma tarea pueden tener igual eficiencia, usen o no módulos.
 
-    c. Verdadero    
-      Justificación: En Pascal, los subrangos solo pueden definirse a partir de tipos ordenados (que tienen una 
-      secuencia natural). Esto incluye tipos como integer, char, boolean o enumerados, pero excluye tipos como 
-      real. Por ejemplo, no se puede crear un subrango de números reales como "type SubReal = 1.5..3.7;", ya que 
-      los reales no se pueden usar como base para subrangos en Pascal estándar.
+  c. VERDADERO.
+    El programa es válido. La función 'auxiliar' calcula el cuadrado de un valor y lo devuelve correctamente.
+    Luego, la función 'calculo' recibe ese valor por valor y modifica la variable b pasada por referencia.
+    No hay errores de sintaxis ni de tipos de datos, por lo tanto el programa es correcto.
 
-    d. Verdadero    
-      Justificación: Cualquier bucle repeat-until puede reescribirse como un bucle while. La diferencia principal 
-      es que repeat-until siempre ejecuta el cuerpo al menos una vez (comprueba la condición al final), mientras 
-      que while comprueba la condición al principio. Para reescribir un repeat-until como while, hay que negar la 
-      condición y asegurarse de que el cuerpo se ejecute al menos una vez si es necesario. Un ejemplo sería:
-      
-      repeat
-        // código
-      until condición;
-      
-      Se puede reescribir como:
-      
-      // código (primera ejecución forzada)
-      while not condición do
-      begin
-        // código
-      end;
+  d. VERDADERO.
+    Si se conoce la dimensión lógica del arreglo, es posible recorrerlo utilizando un ciclo repeat-until.
+    Se debe controlar la cantidad de elementos recorridos con una variable auxiliar.
 
-    e. Verdadero
-      Justificación: Además de los parámetros, existen otros mecanismos para comunicar información entre el 
-      programa principal y los módulos: variables globales declaradas en la sección principal del programa y 
-      accesibles desde los módulos, unidades (units) que permiten compartir tipos, constantes y variables entre 
-      módulos, el valor de retorno en el caso de las funciones, y archivos compartidos que pueden ser usados por 
-      diferentes partes del programa. Por tanto, los parámetros no son el único mecanismo de comunicación entre 
-      el programa y sus módulos.
+  e. FALSO.
+    Aunque la forma más adecuada y común de comunicación entre el programa y los módulos es a través de parámetros,
+    también pueden compartirse datos mediante variables globales (aunque no se recomienda por romper el encapsulamiento).
   }
+
 
 {=======================================================================================================}
