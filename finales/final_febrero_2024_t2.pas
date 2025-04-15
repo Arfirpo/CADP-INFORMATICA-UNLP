@@ -1,77 +1,4 @@
-{1) Una empresa dispone de una estructura de datos con las ventas de su comercio. De cada venta se conoce: numero de venta, cantidad de productos y tipo de pago (efectivo o tarjeta). Se pide implementar un programa que genere una seguda estructura con las ventas cuya cantidad de productos tenga mas digitos pares que impares. En la estructura generada deben quedar almacenadas las ventas de tipo de pago efectivo antes que las de tipo de pago con tarjeta}
-
-
-  program ejercicio1;
-
-  type
-    venta = record
-      nro: integer;
-      cantProd: integer;
-      tPago: 1..2;
-    end;
-
-    lVentas = ^nVentas;
-
-    nVentas = record
-      dato: venta;
-      sig: lVentas;
-    end;
-  
-  {modulos}
-  procedure generarLista(var l: lVentas);
-  var v: venta;
-  begin
-    //se dispone.
-  end;
-
-  function masPares(num: integer):boolean;
-  var dig,par,impar: integer;
-  begin
-    par := 0; impar := 0;
-    while (num <> 0) do begin
-      dig := num mod 10;
-      if dig mod 2 = 0 then 
-        par := par + 1
-      else impar := impar + 1;
-      num := num DIV 10;
-    end;
-    masPares := par > impar
-  end;
-
-  procedure insertarOrdenado(var l: lVentas; v: venta);
-  var nue,ant,act: lVentas;
-  begin
-    new(nue);
-    nue^.dato := v;
-    act := l;
-    ant := nil;
-    while (act <> nil) and (act^.dato.tPago < v.tPago) do begin
-      ant := act;
-      act := act^.sig;
-    end;
-    if (ant = nil) then
-      l := nue
-    else
-      ant^.sig := nue;
-    nue^.sig := act;
-  end;
-
-  procedure procesarLista(l: lVentas; var l2: lVentas);
-  begin
-    while (l <> nil) do begin
-      if (masPares(l^.dato.cantProd)) then insertarOrdenado(l2,l^.dato);
-      l := l^.sig;
-    end;
-  end;
-
-  {Programa principal}
-  var pri1,pri2: lVentas;
-  begin
-    pri1 := nil; pri2 := nil;
-    generarLista(pri1);
-    procesarLista(pri1,pri2);
-  End.
-
+{1) Una empresa dispone de una estructura de datos con las ventas de su comercio. De cada venta se conoce: numero de venta, cantidad de productos y tipo de pago (efectivo o tarjeta). Se pide implementar un programa que genere una seguda estructura con las ventas cuya cantidad de productos tenga al menos dos digitos pares. En la estructura generada deben quedar almacenadas las ventas de tipo de pago tarjeta antes que las de tipo de pago efectivo}
 {=======================================================================================================}
 
 {2) Dados los siguientes programas indique para cada uno si son válidos o no. Además, analice si considera que el funcionamiento en ambos programas es el mismo o no. JUSTIFIQUE.}
@@ -112,28 +39,29 @@
     info = record                     
       nombre: string;                 
       nota: integer;                  
-      datos: ^integer;                
+      prom: real;
+			datos: ^integer;                
     end;
 
-    vector = array [1..100] of info;          
+    vector = array [1..80] of info;          
 
   var 
     v: vector;                                               
-    i,j: integer;                              
+    i,cant integer;                              
     e: info;                                   
   begin
-    read(e.nombre);
-    i := 0;
-    while(i <= 100) and (e.nombre <> 'ZZZ') do begin
-      read(e.nota);
-      e.datos:= nil;
-      i := i + 1;
-      v[i] := e;
-      read(e.nombre);
+    for i := 1 to 80 do begin
+			read(e.nota);
+			read(e.nombre);
+			read(e.prom);
+			if(i MOD 2 = 0) then new(v[i].datos)
+											else v[i].datos := nil;
     end;
-    for j := 1 to i do begin
-      new(v[j].datos);
-      v[j].datos^ := v[j].nota MOD 10;
+    i := 0;
+    while(i <= 80) and (e.nombre <> 'ZZZ') do begin
+			cant := 0;
+      if(v[i].nota > 5) then cant := cant + 1;
+			i := i+1;
     end;
   End.
 
@@ -156,47 +84,49 @@
   --------------
   }
   type 
-    info = record                     
-      nombre: string;       // sin longitud específica → se asume string[255] → 256 bytes
-      nota: integer;        // 6 bytes
-      datos: ^integer;      // puntero: 4 bytes
+    info = record                		//Total: 276 bytes
+      nombre: string;            		//255 + 1 = 256 bytes     
+      nota: integer;             		// 6 bytes
+      prom: real;								 		// 10 bytes
+			datos: ^integer;           		// 4 bytes     
     end;
 
-    vector = array [1..100] of info;
+    vector = array [1..80] of info; // 80 * 276 = 22.080 bytes.
 
   {Variables del programa:
   ------------------------
-  - v: vector de 100 elementos → cada elemento ocupa:
+  - v: vector de 80 elementos → cada elemento ocupa:
       nombre: 256 bytes
       nota: 6 bytes
+			prom: 10 bytes
       datos: 4 bytes
-      TOTAL por elemento: 266 bytes
+      TOTAL por elemento: 276 bytes
 
-    → 266 × 100 = **26.600 bytes**
+    → 276 × 80 = **22.080 bytes**
 
-  - i, j: integer → 6 + 6 = 12 bytes
-  - e: info → 266 bytes
+  - i, cant: integer → 6 + 6 = 12 bytes
+  - e: info → 276 bytes
 
   Memoria Estática Total:
   ------------------------
-  vector v            : 26.600 bytes  
+  vector v            : 22.080 bytes  
   enteros i y j       :     12 bytes  
-  registro e          :    266 bytes  
-  **TOTAL ESTÁTICA    : 26.878 bytes**
+  registro e          :    276 bytes  
+  **TOTAL ESTÁTICA    : 22.368 bytes**
 
-  Memoria Dinámica (peor caso):
+  Memoria Dinámica:
   ------------------------------
-  En el ciclo `for j := 1 to i`, se ejecuta hasta `i = 100`.
-  Se hace: `new(v[j].datos)` → se reserva 6 bytes por cada uno.
+  En el ciclo `for j := 1 to 80`, se ejecuta hasta `i = 80`.
+  Se hace: `new(v[i].datos)` solo cuando`if(i MOD 2 = 0)` lo cual ocurre la mitad de las veces, es decir 40 veces. → se reserva 6 bytes por cada uno.
 
-  → 100 × 6 bytes = **600 bytes**
+  → 40 × 6 bytes = **240 bytes**
 
   Memoria dinámica total (peor caso): **600 bytes**
 
   Resumen:
   --------
-  Memoria Estática : 26.878 bytes  
-  Memoria Dinámica (máx): 600 bytes } 
+  Memoria Estática : 22.368 bytes bytes  
+  Memoria Dinámica: 240 bytes } 
 
 {=======================================================================================================}
 
@@ -207,43 +137,50 @@
     info = record                     
       nombre: string;                 
       nota: integer;                  
-      datos: ^integer;                
+      prom: real;
+			datos: ^integer;                
     end;
 
-    vector = array [1..100] of info;          
+    vector = array [1..80] of info;          
 
   var 
     v: vector;                                               
-    i,j: integer;                              
+    i,cant integer;                              
     e: info;                                   
   begin
-    read(e.nombre);                                       //no se cuenta
-    i := 0;                                               // 1 unidad de tiempo  
-    while(i < 100) and (e.nombre <> 'ZZZ') do begin      //C(N+1) + N(cuerpo while)
-      read(e.nota);                                       //C = 3, N = 100, cuerpo while = 4
-      e.datos:= nil;                                      //(3*101) + (100*4) = 703 unidades de tiempo
-      i := i + 1;
-      v[i] := e;
-      read(e.nombre);
+    for i := 1 to 80 do begin // (3N + 2) + N(C). N = 80; C = 
+			read(e.nota);           // no cuenta.
+			read(e.nombre);					// no cuenta.
+			read(e.prom);						// no cuenta.
+			if(i MOD 2 = 0) then new(v[i].datos) 		// 2 + 1
+											else v[i].datos := nil;
     end;
-    for j := 1 to i do begin                              //(3N + 2) +N(cuerpo for) = (3*100 + 2) + 100(2) = 
-      new(v[j].datos);                                    //302 + 200 = 502 unidades de tiempo
-      v[j].datos^ := v[j].nota MOD 10;
+    i := 0;																		// 1
+    while(i <= 80) and (e.nombre <> 'ZZZ') do begin // C(N + 1) + N(Cuerpo While)
+			cant := 0;						//1
+      if(v[i].nota > 5) then cant := cant + 1; //1 + 2
+			i := i+1;				// 2
     end;
   End.
 
   {
-  Tiempo de ejecución = 1 + tiempo de while + tiempo del for = 1 + 703 + 502 = 1206 UT
+	Tiempo del programa = tiempo del for (482 UT) + 1 + tiempo del while (732 UT) - Total: 1215 UT.
+	Tiempo del for = ((3 * 80) + 2) + 80  * 3 = 242 + 240 = 482 UT.
+	Tiempo del While = 3(81 + 1) + 81(6) = 732 UT.
+	Tiempo de I := 0 -> 1 UT
 }
 {=======================================================================================================}
 
 { 5. Indique Verdadero o Falso. Justifique en todos los casos.
 
-  a. Incluir módulos dentro de un programa implica que el programa es más eficiente que otro programa que realiza la misma tarea pero sin utilizar módulos. F
+  a. Siempre es posible declarar un tipo subrango donde su tipo base sea cualquiera de los tipos simples vistos en la teoria.
   
-  b. El siguiente programa es válido.  v}
+  b. Incluir modulos dentro de un programa implica que el programa es mas eficiente que otro programa que realiza la misma tarea pero sin utilizar modulos.
+	
+	
+	c.El siguiente programa es válido.  }
 
-  program ejercicio5;
+  program ejercicio;
 
     function auxiliar(val:integer): integer;
     begin
@@ -259,24 +196,22 @@
   var
     a,b:integer;
   begin
-    a:= 16;
-    b:= 6;
+    a:= 4;
+    b:= 8;
     calculo(auxiliar(a),b);
   end.
     
-  {  c. No siempre es posible declarar un tipo subrango donde su tipo base sea cualquiera de los tipos simples en la teoría. V
+  {  d. Si conozco la dimensión logica de un arreglo de elementos enteros puedo utilizar un repeat para recorrerlo e imprimir sus elementos
     
-    d. Un programa que utiliza un repeat until puede reescribirse utilizando un while. F
-    
-    e. La comunicación entre el programa y los módulos no sólo se puede hacer utilizando parámetros. V
+    e. La comunicación entre el programa y los modulos solo se puede hacer utilizando parametros.
   }
 
   { Respuestas al punto 5:
     a. Falso
-    b. Verdadero
+    b. Falso
     c. Verdadero
     d. Verdadero
-    e. Verdadero
+    e. Falso
 
     Justificaciones detalladas:
 
