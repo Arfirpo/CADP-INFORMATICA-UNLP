@@ -1,7 +1,15 @@
 1) si en el enunciado se dispone un vector (en este caso de 1..1000, no se especifica si esta ordenado o no) y una lista ordenada (por el mismo dato que contiene el vector), se me pide una solucion eficiente en tiempo de ejecución. ¿Es valido si en el examen ordeno el vector por insercion u seleccion y luego recorro ambas estructuras una vez para trabajarlas?
 
+Respuesta: En CADP no se evaluan algoritmos de ordenación asi que la solución mas eficiente es recorrer el vector de alumnos no regulares e ir revisando la lista (aprovechando su orden) en cada iteración.
+
 2) ¿los accesos directos al vector se cuentan en un ejercicio de calculo de tiempo de ejecucion?.
+
+Respuesta: No, no se cuentan.
 
 3) ¿las operaciones aritmeticas dentro de los accesos directos a vectores, cuentan para el tiempo de ejecucion?.
 
+Respuesta: Si, si se cuentan.
+
 4) ¿las constantes se cuentan en memoria estatica o dinamica?.
+
+Respuesta: Si, si se cuentan.
