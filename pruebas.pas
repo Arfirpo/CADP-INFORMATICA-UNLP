@@ -2,6 +2,8 @@ program pruebas;
 
 {modulos}
 
+//vectores
+
 //agregar al final
 procedure agregarAlFinal(var v:vector; var dimL: integer; e: elemento);
 begin
@@ -94,5 +96,53 @@ begin
   if not((inf <= sup) and (v[med] = e)) then med := -1;
   busquedaDicotomica := med;
 end;
+
+
+//listas
+
+//agregar adelante
+procedure agregarAdelante(var l: lista; e: elemento);
+var nue: litsa;
+begin
+  new(nue);
+  nue^.dato := e;
+  nue^.sig := l;
+  l := nue;
+end;
+
+//agregar atras
+procedure agregarAtras(var l: lista; e: elemento);
+var nue,aux: lista;
+begin
+  new(nue);
+  nue^.dato := e;
+  nue^.sig := nil;
+  if l = nil then
+    l := nue
+  else begin
+    aux := l;
+    while aux^.sig <> nil do
+      aux := aux^.sig;
+    aux^.sig := nue;
+  end;
+end;
+
+//agregar atras optimizado (dos punteros)
+procedure agregarAtrasOptimizado(var pri,ult:lista; e:elemento);
+var nue,act: lista;
+begin
+  new(nue);
+  nue^.dato := e;
+  nue^.sig := nil;
+  if pri = nil then begin
+    pri := nue;
+    ult := nue;
+  end
+  else begin
+    ult^.sig := nue
+    ult := nue;
+  end;
+end;
+
 
 {programa principal}
