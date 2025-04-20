@@ -68,7 +68,7 @@ program pruebas;
       if(v[pos] = e) then esta := true
       else pos := pos + 1;
     end;
-    if not((pos <= dimL) and (v[pos] = e)) then pos := -1
+    if not((pos <= dimL) and (v[pos] = e)) then pos := -1;
     buscar := pos;
   end;
 
