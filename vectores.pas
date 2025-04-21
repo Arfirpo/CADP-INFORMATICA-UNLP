@@ -185,7 +185,6 @@ type
 		ult := nue;
 	end;
 
-	
 
 	procedure insertarOrdenado(var l: lista; num: integer);
 	var nue,ant,act: lista;
@@ -206,6 +205,49 @@ type
 			ant^.sig := nue;
 			nue^.sig := act;
 		end;
+	end;
+
+	procedure eliminarNodo(var l: lista; num: integer);
+	var ant,act: lista;
+	begin
+	  act := l;
+	  ant := Nil;
+	  while (act <> nil) and (act^.dato <> num) do begin
+			ant := act;
+			act := act^.sig;
+	  end;
+	  if(act <> nil) and (act^.dato = num) then begin
+			if (ant = nil) then
+	  		l := l^.Sig
+			else
+				ant^.sig := act^.sig;
+			dispose(act);
+		end;
+	end;
+
+	procedure eliminarOcurrencias(var l:lista; num: integer);
+	var ant,act,aux: lista;
+	begin
+	  act := l;
+	  ant := nil;
+	  while (act <> nil) do begin
+			if (act^.dato = num) then begin
+				aux := act;
+			  if(ant = nil) then begin
+					l := l^.sig;
+					act := l;				
+			  end
+				else begin
+					ant^.sig := act^.sig
+					act := act^.sig
+				end;
+				dispose(aux);
+			end
+			else begin
+				ant := act
+				act := act^.sig;
+			end;
+	  end;
 	end;
 
 
